@@ -2,6 +2,15 @@ import csv
 
 DATA_HEADER=['id','submission_time','view_number','vote_number','title','message','image']
 
+
+
+def write(results):
+    with open('sample_data/question.csv', 'w', newline='') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=DATA_HEADER)
+        writer.writeheader()
+        for story in results:
+            writer.writerow(story) 
+
 def get_dict(file):
     results = []
     with open(file, newline='') as csv_file:
@@ -36,9 +45,12 @@ def write_answer(new_answer, question_id):
         file.write(f'\n{number},submission_time, vote_number,{question_id},{new_answer},image')
       
 
-def write_question(qu):
-    number=get_len('sample_data/question.csv')
-
+def write_question(new_question, question_id):
+    questions=get_dict('sample_data/question.csv')
+    for question in questions:
+        if question['id']==question_id:
+            question=new_question
+    print(questions)
 
 
 def delete_function(question_id):
@@ -46,9 +58,4 @@ def delete_function(question_id):
     for result in results:
         if result['id']==question_id:
             results.remove(result)
-    with open('sample_data/question.csv', 'w', newline='') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=DATA_HEADER)
-        writer.writeheader()
-        for story in results:
-            writer.writerow(story) 
-
+    write(results) 
