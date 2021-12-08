@@ -13,7 +13,7 @@ def get_dict(file):
 
 def get_question(question_id):
     question=[]
-    results = get_dict('sample_data/question.csv')
+    results = get_dict("/home/ioana/ask-mate-1-python-IoanaPedroo/sample_data/answer.csv")
     for result in results:
         if result['id']==question_id:
             question.append(result['title'])

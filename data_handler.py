@@ -1,7 +1,10 @@
 import csv
+from operator import itemgetter
 
 DATA_HEADER = ['id', 'submission_time', 'view_number', 'vote_number', 'title', 'message', 'image']
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+UPLOAD_FOLDER = '/home/ioana/ask-mate-1-python-IoanaPedroo/static/image'
+
 
 def get_questions(file):
     result = []
@@ -9,7 +12,8 @@ def get_questions(file):
         reader = csv.DictReader(csv_file)
         for element in reader:
             result.append(element)
-    return result
+    final = sorted(result, key=itemgetter('id'), reverse=True)
+    return final
 
 
 def allowed_file(filename):

@@ -16,6 +16,7 @@
             </tr>
             </thead>
             <tbody>
+             <form method="post" enctype = "multipart/form-data">
                 <tr>
                     <td>Submission time: <input type="text" minlength="5" name="submission_time"></td>
                 </tr>
@@ -32,11 +33,12 @@
                     <td>Message: <input type="text" name="message"></td>
                 </tr>
                 <tr>
-                    <td>Image: <input type=file name=image id=image accept='image/*'></td>
+                    <td><input type=file name=image id=image accept='image/*'></td>
                 </tr>
                 <tr>
                     <td><button type="submit">Add new User Story</button></td>
                 </tr>
+             </form>
             </tbody>
         </table>
     </form>
