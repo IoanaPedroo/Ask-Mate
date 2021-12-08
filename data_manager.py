@@ -1,0 +1,54 @@
+import csv
+
+DATA_HEADER=['id','submission_time','view_number','vote_number','title','message','image']
+
+def get_dict(file):
+    results = []
+    with open(file, newline='') as csv_file:
+        reader = csv.DictReader(csv_file)
+        for element in reader:
+            results.append(element)
+    return results
+
+
+def get_question(question_id):
+    question=[]
+    results = get_dict('sample_data/question.csv')
+    for result in results:
+        if result['id']==question_id:
+            question.append(result['title'])
+            question.append(result['message'])
+    return "    ".join(question)
+
+
+def get_len(file):
+    with open(file,'r') as file:
+        files=file.read()
+        lines=files.split('\n')
+    number=len(lines)
+    return number
+
+
+
+def write_answer(new_answer, question_id):
+    number=get_len('sample_data/answer.csv')
+    with open('sample_data/answer.csv', 'a') as file:
+        file.write(f'\n{number},submission_time, vote_number,{question_id},{new_answer},image')
+      
+
+def write_question(qu):
+    number=get_len('sample_data/question.csv')
+
+
+
+def delete_function(question_id):
+    results = get_dict('sample_data/question.csv')
+    for result in results:
+        if result['id']==question_id:
+            results.remove(result)
+    with open('sample_data/question.csv', 'w', newline='') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=DATA_HEADER)
+        writer.writeheader()
+        for story in results:
+            writer.writerow(story) 
+

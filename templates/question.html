@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Q$A</title>
+    </head>
+    <body>
+        <h1>DUNNO LAND</h1>
+        <br>
+        <h2>
+            Question: {{question}}
+        </h2>
+        <form action = '{{url_for("delete",question_id=1)}}'>
+            <button type = 'submit' name='delete'>Delete question</button>
+        </form>
+        <form action = '{{url_for("edit_question",question_id=1)}}'>
+            <button type = 'submit' name='edit'>Edit question</button>
+        </form>
+        <hr>
+        <br>
+        <h3>Answers:</h3>
+        <ul>
+            {% for answer in answers%}
+            <li>ID:{{answer['id']}},{{answer['message']}}</li>
+            {%endfor%}
+        </ul>
+        <a href='{{ url_for("new_answer", question_id=1) }}'>Post a new answer</a>
+    </body>
+</html>

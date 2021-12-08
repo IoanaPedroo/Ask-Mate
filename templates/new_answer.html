@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>NEW ANSWER</title>
+    </head>
+    <body align='center'>
+        <form action='{{url_for("display_question", question_id=1)}}' method="post">
+            <label for='message'>ADD A NEW ANSWER</label><br>
+            <textarea id='message' name="message"></textarea>
+            <br>
+            <button type="submit">Submit answer</button>
+        </form>
+    </body>
+</html>
