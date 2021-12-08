@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, url_for, redirect
 import data_manager
-from flask import Flask, render_template, request, redirect, url_for
 import data_handler
 
 app = Flask(__name__)
@@ -25,8 +24,8 @@ def display_question(question_id):
             data_manager.write_answer(new_answer, question_id)
         if 'question_message' in request.form:
             new_question=request.form['question_message']
-            data_manager.write_question(qu)
-    return render_template('question.html',question=data_manager.get_question(question_id), answers=data_manager.get_dict('sample_data/answer.csv'), )
+            data_manager.write_question(new_question, question_id)
+    return render_template('question.html',question=data_manager.get_question(question_id), answers=data_manager.get_dict('sample_data/answer.csv') )
 
 @app.route('/question/<question_id>/delete')
 def delete(question_id):
@@ -36,11 +35,33 @@ def delete(question_id):
 
 @app.route("/answer/<answer_id>/delete", methods=["GET", "POST"])
 def delete_answer(answer_id):
-    answers=data_manager.get_dict('sample_data/answer.csv')
+    answers = data_handler.get_all_user_story("/home/ioana/ask-mate-1-python-IoanaPedroo/sample_data/answer.csv")
     for answer in answers:
         if answer['id'] == answer_id:
             answers.remove(answer)
+            data_handler.save_data_to_csv(answers, "/home/ioana/ask-mate-1-python-IoanaPedroo/sample_data/answer.csv",  data_handler.DATA_HEADER1)
     return redirect("/question/<question_id>")
+
+@app.route('/answer/<answer_id>/vote_up', methods=["GET", "POST"])
+def vote_up(answer_id):
+    answers=data_handler.get_questions('sample_data/answer.csv')
+    print(request.args)
+    for answer in answers:
+        if answer['id']==answer_id:
+            answer['vote_number'] = int( answer['vote_number'])+1
+            data_handler.save_data_to_csv(answers, 'sample_data/answer.csv', data_handler.DATA_HEADER1)
+    return render_template('question.html')
+
+
+@app.route('/answer/<answer_id>/vote_down',methods=["GET", "POST"])
+def vote_down(answer_id):
+    answers=data_handler.get_questions('sample_data/answer.csv')
+    for answer in answers:
+        if answer['id']==answer_id:
+            answer['vote_number'] =  int( answer['vote_number'])-1
+            data_handler.save_data_to_csv(answers, 'sample_data/answer.csv', data_handler.DATA_HEADER1)
+    return render_template('question.html')
+
 
 
 
@@ -68,30 +89,26 @@ def add_q(id=None):
         result['vote_number'] = request.form.get('vote_number')
         result['title'] = request.form.get('title')
         result['message'] = request.form.get('message')
-        result['image'] = request.files('image')
+        #result['image'] = request.files('image')
         questions.append(result)
-        data_handler.save_data_to_csv(questions, "/home/ioana/ask-mate-1-python-IoanaPedroo/sample_data/question.csv")
+        data_handler.save_data_to_csv(questions, "/home/ioana/ask-mate-1-python-IoanaPedroo/sample_data/question.csv",  data_handler.DATA_HEADER)
         return redirect("/question/<question_id>")
 
-@app.route("/answer/<answer_id>/delete", methods=["GET", "POST"])
-def delete_answer(answer_id):
-    answers = data_handler.get_all_user_story("/home/ioana/ask-mate-1-python-IoanaPedroo/sample_data/answer.csv")
-    for answer in answers:
-        if answer['id'] == answer_id:
-            answers.remove(answer)
-            data_handler.save_data_to_csv(answers, "/home/ioana/ask-mate-1-python-IoanaPedroo/sample_data/answer.csv")
-    return redirect("/question/<question_id>")
 
-def upload_image():
-    if 'image' not in request.files:
-        flash('No file apart')
-        return redirect('/add-question')
-    image = request.files['image']
-    if file.filename == '':
-        flash('No image selected for uploding')
-        return redirect('/add-question')
-    if file and allowe_file(file.filename):
-        filename = secure_filename(file.filename)
+
+# def upload_image():
+#     if 'image' not in request.files:
+#         flash('No file apart')
+#         return redirect('/add-question')
+#     image = request.files['image']
+#     if file.filename == '':
+#         flash('No image selected for uploding')
+#         return redirect('/add-question')
+#     if file and allowe_file(file.filename):
+#         filename = secure_filename(file.filename)
+#     pass
+
+
 if __name__ == "__main__":
     app.run(debug=True, # Allow verbose error reports
         port=5000 )
