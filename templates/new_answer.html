@@ -5,7 +5,7 @@
         <title>NEW ANSWER</title>
     </head>
     <body align='center'>
-        <form action='{{url_for("display_question", question_id=1)}}' method="post">
+        <form action='{{url_for("display_question", question_id)}}' method="post">
             <label for='message'>ADD A NEW ANSWER</label><br>
             <textarea id='message' name="message"></textarea>
             <br>
