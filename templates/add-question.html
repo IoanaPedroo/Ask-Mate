@@ -16,7 +16,7 @@
             </tr>
             </thead>
             <tbody>
-             <form method="post" enctype = "multipart/form-data">
+             <form method="post" action="{{ url_for('add_q') }} enctype="multipart/form-data">
                 <tr>
                     <td>Submission time: <input type="text" minlength="5" name="submission_time"></td>
                 </tr>
@@ -33,7 +33,8 @@
                     <td>Message: <input type="text" name="message"></td>
                 </tr>
                 <tr>
-                    <td><input type=file name=image id=image accept='image/*'></td>
+                    <label for="image">Image</label>
+                    <td><input type="file" name="image" id="image" accept='image/*'></td>
                 </tr>
                 <tr>
                     <td><button type="submit">Add new User Story</button></td>
