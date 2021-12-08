@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ask</title>
+    <style>
+    table, th, td {
+        border:1px solid black;
+        object-position: center;
+        width: 1500px;
+        padding: 15px;
+    }
+    h1, a {
+        font-family: Consolas;
+    }
+    h1 {
+        font-size: 50px;
+        object-position: center;
+    }
+    a {
+        font-size: 20px;
+
+    }
+    </style>
+</head>
+    <body>
+    <h1>ASK MATE1</h1>
+        <table>
+            <thead>
+                <a href='/add-question'>Add Question</a>
+                <tr>
+                    {% for col in header %}
+                        <th>{{ col.capitalize() }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for dictionary  in questions %}
+                    <tr>
+                    {% for key in dictionary %}
+                        <td>{{ dictionary[key] }}</td>
+                    {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </body>
+</html>
