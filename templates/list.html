@@ -37,9 +37,18 @@
             <tbody>
                 {% for dictionary  in questions %}
                     <tr>
-                    {% for key in dictionary %}
-                        <td>{{ dictionary[key] }}</td>
-                    {% endfor %}
+                        <a href='"/question/<question_id>"'> Question</a>
+                        <td> {{ dictionary['id'] }}</td>
+                        <td>{{ dictionary['submission_time'] }}</td>
+                        <td>{{ dictionary['view_number'] }}</td>
+                        <td>{{ dictionary['vote_number'] }}</td>
+                        <td>{{ dictionary['title'] }}</td>
+                        <td>{{ dictionary['message'] }}</td>
+                        <td>
+                            {% if dictionary.images %}
+                            <img src="{{ dictionary['images'] }}" alt="{{ dictionary['images'] }}">
+                            {% endif %}}
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>

@@ -110,16 +110,13 @@ def add_q(id=None):
         result["vote_number"] = request.form.get("vote_number")
         result["title"] = request.form.get("title")
         result["message"] = request.form.get("message")
-        print(request.files)
         if request.files:
             image = request.files["images"]
             if image.filename != "":
-                path = secure_filename(
-                    os.path.join(app.config["UPLOAD_FOLDER"], image.filename)
-                )
+                path = os.path.join(app.config["UPLOAD_FOLDER"], secure_filename(image.filename))
                 image.save(path)
-            result["images"] = image
-        questions.append(result)
+                result["images"] = "../static/images/" + secure_filename(image.filename)
+        questions.insert(0, result)
         data_handler.save_data_to_csv(
             questions, "sample_data/question.csv", data_handler.DATA_HEADER
         )

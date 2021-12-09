@@ -21,7 +21,6 @@ DATA_HEADER1 = [
     "images",
 ]
 ALLOWED_EXTENSIONS = set(["txt", "pdf", "png", "jpg", "jpeg", "gif"])
-UPLOAD_FOLDER = "/home/ioana/ask-mate-1-python-IoanaPedroo/static/images"
 
 
 def get_questions(file):
