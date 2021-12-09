@@ -5,7 +5,7 @@ import os
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), "static", "image")
+app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), "static", "images")
 
 
 @app.route("/")
@@ -28,11 +28,11 @@ def display_question(question_id):
             new_question=request.form['question_message']
             data_manager.write_question(new_question, question_id)
         answers=data_handler.get_questions('sample_data/answer.csv')
-       
+
     for answer in answers:
         if answer['id'] == answer_id:
             answer['vote_number'] = int(answer['vote_number'])+1
-            data_handler.save_data_to_csv(answers, 'sample_data/answer.csv', data_handler.DATA_HEADER1)
+            data_handler.save_data_to_csv(answers,"sample_data/answer.csv", data_handler.DATA_HEADER1)
     return render_template('question.html',question=data_manager.get_question(question_id), answers=data_manager.get_dict('sample_data/answer.csv') )
 
 @app.route('/question/<question_id>/delete')
@@ -57,7 +57,7 @@ def delete_answer(answer_id):
 #     for answer in answers:
 #         if answer['id']==answer_id:
 #             answer['vote_number'] = int( answer['vote_number'])+1
-#             data_handler.save_data_to_csv(answers, 'sample_data/answer.csv', data_handler.DATA_HEADER1)
+#             data_handler.save_data_to_csv(answers,"sample_data/answer.csv", data_handler.DATA_HEADER1)
 #     return render_template('question.html')
 
 
@@ -67,7 +67,7 @@ def delete_answer(answer_id):
 #     for answer in answers:
 #         if answer['id']==answer_id:
 #             answer['vote_number'] =  int( answer['vote_number'])-1
-#             data_handler.save_data_to_csv(answers, 'sample_data/answer.csv', data_handler.DATA_HEADER1)
+#             data_handler.save_data_to_csv(answers,"sample_data/answer.csv", data_handler.DATA_HEADER1)
 #     return render_template('question.html')
 
 
@@ -97,15 +97,16 @@ def add_q(id=None):
         result['vote_number'] = request.form.get('vote_number')
         result['title'] = request.form.get('title')
         result['message'] = request.form.get('message')
+        print(request.files)
         if request.files:
-            image = request.files['image']
+            image = request.files['images']
             if image.filename != '':
                 path = secure_filename(os.path.join(app.config['UPLOAD_FOLDER'], image.filename))
                 image.save(path)
-            result['image'] = image
+            result['images'] = image
         questions.append(result)
         data_handler.save_data_to_csv(questions, "sample_data/question.csv", data_handler.DATA_HEADER)
-        return redirect("/question/<question_id>")
+        return redirect("/list")
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 import csv
 
-DATA_HEADER=['id','submission_time','view_number','vote_number','title','message','image']
+DATA_HEADER=['id','submission_time','view_number','vote_number','title','message','images']
 
 
 
@@ -42,7 +42,7 @@ def get_len(file):
 def write_answer(new_answer, question_id):
     number=get_len('sample_data/answer.csv')
     with open('sample_data/answer.csv', 'a') as file:
-        file.write(f'\n{number},submission_time, vote_number,{question_id},{new_answer},image')
+        file.write(f'\n{number},submission_time, vote_number,{question_id},{new_answer},images')
       
 
 def write_question(new_question, question_id):
