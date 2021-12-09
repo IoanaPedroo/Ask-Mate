@@ -10,7 +10,7 @@ DATA_HEADER = [
     "vote_number",
     "title",
     "message",
-    "image",
+    "images",
 ]
 DATA_HEADER1 = [
     "id",
@@ -18,17 +18,20 @@ DATA_HEADER1 = [
     "vote_number",
     "question_id",
     "message",
-    "image",
+    "images",
 ]
 
 
 def sort_q(questions, order_by, order_direction):
-    if order_direction == "ASC":
-        order_direction = False
-    elif order_direction == "DESC":
-        order_direction = True
+    if order_direction == "ASC" and order_by in ["id","submission_time","view_number","vote_number"]:
+        questions.sort(key=lambda t: int(t[order_by]))
+    elif order_direction == "ASC" and order_by in ["title","message","images"]:
+        questions.sort(key=lambda t: t[order_by])
+    elif order_direction == "DESC" and order_by in ["id","submission_time","view_number","vote_number"]:
+        questions.sort(key=lambda t: int(t[order_by]), reverse=True)
+    elif order_direction == "DESC" and order_by in ["title","message","images"]:
+        questions.sort(key=lambda t: t[order_by], reverse=True)
     print(order_direction)
-    questions = sorted(questions, key=lambda t: t[order_by], reverse=order_direction)
     return questions
   
         
@@ -68,10 +71,9 @@ def get_answers(question_id):
 
 
 def get_question(question_id):
-    question=[]
     results = get_questions('sample_data/question.csv')
     for result in results:
-        if result['id']==question_id:
+        if result['id'] == question_id:
             return result
 
 
@@ -101,7 +103,7 @@ def write_question(new_question, question_id):
 def delete_function(question_id):
     results = get_questions('sample_data/question.csv')
     for result in results:
-        if result['id']==question_id:
+        if result['id'] == question_id:
             results.remove(result)
     write(results) 
 

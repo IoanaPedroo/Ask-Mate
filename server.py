@@ -34,7 +34,8 @@ def new_answer(question_id):
 @app.route('/list/<question_id>/delete', methods=['GET', 'POST'])
 def delete(question_id):
     data_handler.delete_function(question_id)
-    return render_template('question.html', question_id=question_id)
+    return redirect(url_for('list_q'))
+
 
 
 @app.route("/<question_id>/<answer_id>/delete", methods=["GET", "POST"])

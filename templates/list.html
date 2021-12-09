@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>ask</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <style>
     table, th, td {
         border:1px solid black;
@@ -21,11 +22,15 @@
         font-size: 20px;
 
     }
+    .img-thumbnail{
+        width: 200px;
+        height: 200px;
+    }
     </style>
 </head>
     <body>
     <h1>ASK MATE1</h1>
-        <table>
+        <table class="table table-bordered">
             <thead>
                 <a href='/add-question'>Add Question</a>
                 <tr>
@@ -38,10 +43,9 @@
                 </tr>
             </thead>
             <tbody>
-                <a href='{{url_for("display_question", question_id=question_id)}}'> Question</a>
                 {% for dictionary  in questions %}
                     <tr>
-                        <td> {{ dictionary['id'] }}</td>
+                        <td><a href='{{url_for("display_question", question_id=dictionary["id"])}}'> {{ dictionary['id'] }} </a></td>
                         <td>{{ dictionary['submission_time'] }}</td>
                         <td>{{ dictionary['view_number'] }}</td>
                         <td>{{ dictionary['vote_number'] }}</td>
@@ -49,7 +53,7 @@
                         <td>{{ dictionary['message'] }}</td>
                         <td>
                             {% if dictionary.images %}
-                            <img src="{{ dictionary['images'] }}" alt="{{ dictionary['images'] }}">
+                            <img src="{{ dictionary['images'] }}" alt="{{ dictionary['images'] }}" class="img-thumbnail">
                             {% endif %}
                         </td>
                     </tr>
