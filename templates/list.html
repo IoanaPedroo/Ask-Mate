@@ -30,14 +30,17 @@
                 <a href='/add-question'>Add Question</a>
                 <tr>
                     {% for col in header %}
-                        <th>{{ col.capitalize() }}</th>
+                        <th>{{ col.capitalize() }}
+                        <a href='{{url_for("list_q", order_by=col, order_direction="ASC")}}'>ASC</a>
+                        <a href='{{url_for("list_q", order_by=col, order_direction="DESC")}}'>DESC</a>
+                        </th>
                     {% endfor %}
                 </tr>
             </thead>
             <tbody>
+                <a href='{{url_for("display_question", question_id=question_id)}}'> Question</a>
                 {% for dictionary  in questions %}
                     <tr>
-                        <a href='{{url_for("display_question", question_id=dictionary["id"] )}}'> Question</a>
                         <td> {{ dictionary['id'] }}</td>
                         <td>{{ dictionary['submission_time'] }}</td>
                         <td>{{ dictionary['view_number'] }}</td>
@@ -47,7 +50,7 @@
                         <td>
                             {% if dictionary.images %}
                             <img src="{{ dictionary['images'] }}" alt="{{ dictionary['images'] }}">
-                            {% endif %}}
+                            {% endif %}
                         </td>
                     </tr>
                 {% endfor %}
