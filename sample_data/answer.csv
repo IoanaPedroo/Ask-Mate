@@ -1,29 +1,22 @@
 id,submission_time,vote_number,question_id,message,image
-1,1493398154,10,1,You need to use brackets: my_list = [],
-2,1493088154,35,1,Look it up in the Python docs,
-3,submission_time, 1,1,45hy4wh,image
-4,submission_time, 1,1,45hy4wh,image
-5,submission_time, 1,1,45wb6b4unimi,image
-6,submission_time, 1,1,scriu,image
-7,submission_time, 1,1,scriu,image
-8,submission_time, 1,1,aergrthj,image
-9,submission_time, 1,1,oeirarhkarbjhrkwHRWOGIH,image
-10,submission_time, 1,1,LKAFJLCZKA,image
-11,submission_time, 1,1,LKAFJLCZKA,image
-12,submission_time, 1,1,LKAFJLCZKA,image
-14,submission_time, 1,1,new answer,image
-17,submission_time, 1,1,hvl,image
-18,submission_time, 1,1,,image
-21,submission_time, vote_number,1,tytkil8,image
-22,submission_time, 0,1,tytkil8,image
-23,submission_time, 0,1,yunr7klul,image
-24,submission_time, 0,1,yunr7klul,image
-25,submission_time, 0,1,yunr7klul,image
-26,submission_time, 0,1,yunr7klul,image
-27,submission_time, 0,1,yunr7klul,image
-28,submission_time, 0,1,yunr7klul,image
-29,submission_time, 0,1,yunr7klul,image
-30,submission_time, 0,1,yunr7klul,image
-31,submission_time, 0,1,yunr7klul,image
+1,1493398154,4,1,"You need to use brackets: my_list = []",
+2,1493088154,35,1,"Look it up in the Python docs",
+3,submission_time, vote_number,1,45hy4wh,image
+4,submission_time, vote_number,1,45hy4wh,image
+5,submission_time, vote_number,1,45wb6b4unimi,image
+6,submission_time, vote_number,1,scriu,image
+7,submission_time, vote_number,1,scriu,image
+8,submission_time, vote_number,1,aergrthj,image
+9,submission_time, vote_number,1,oeirarhkarbjhrkwHRWOGIH,image
+10,submission_time, vote_number,1,LKAFJLCZKA,image
+11,submission_time, vote_number,1,LKAFJLCZKA,image
+12,submission_time, vote_number,1,LKAFJLCZKA,image
+13,submission_time, vote_number,1,w5yb4by,image
+14,submission_time, vote_number,1,new answer,image
+17,submission_time, vote_number,1,hvl,image
+18,submission_time, vote_number,1,,image
+19,submission_time, vote_number,1,ugl7,image
+20,submission_time, vote_number,1,I am totally new to this, any hints,image
+21,submission_time, vote_number,1,wehy65,image
 
-28,submission_time, 0,1,3gwt4hytjuj,image
+21,submission_time, 0,1,3gwt4hytjuj,image

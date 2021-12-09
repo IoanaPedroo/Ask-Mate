@@ -1,8 +1,12 @@
 from flask import Flask, render_template, request, url_for, redirect
 import data_handler
+import os
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
-
+app.config["UPLOAD_FOLDER"] = os.path.join(
+    os.path.dirname(__file__), "static", "images"
+)
 
 
 @app.route("/")
@@ -84,41 +88,34 @@ def edit_question(question_id):
 def list_q():
     questions = data_handler.get_questions("sample_data/question.csv")
     header = data_handler.DATA_HEADER
-    return render_template('list.html', questions=questions, header=header)
+    return render_template("list.html", questions=questions, header=header)
 
-@app.route("/add-question", methods = ["GET", "POST"])
+
+@app.route("/add-question", methods=["GET", "POST"])
 def add_q(id=None):
-    if request.method == 'GET':
-        return render_template('add-question.html', id=id)
-    elif request.method == 'POST':
+    if request.method == "GET":
+        return render_template("add-question.html", id=id)
+    elif request.method == "POST":
         questions = data_handler.get_questions("sample_data/question.csv")
         result = {}
-        result['id'] = len(questions)+1
-        result['submission_time'] = request.form.get('submission_time')
-        result['view_number'] = request.form.get('view_number')
-        result['vote_number'] = request.form.get('vote_number')
-        result['title'] = request.form.get('title')
-        result['message'] = request.form.get('message')
-        #result['image'] = request.files('image')
-        questions.append(result)
-        data_handler.save_data_to_csv(questions, "sample_data/question.csv",  data_handler.DATA_HEADER)
-        return redirect(url_for('list_q'))
-
-
-
-# def upload_image():
-#     if 'image' not in request.files:
-#         flash('No file apart')
-#         return redirect('/add-question')
-#     image = request.files['image']
-#     if file.filename == '':
-#         flash('No image selected for uploding')
-#         return redirect('/add-question')
-#     if file and allowe_file(file.filename):
-#         filename = secure_filename(file.filename)
-#     pass
+        result["id"] = len(questions) + 1
+        result["submission_time"] = request.form.get("submission_time")
+        result["view_number"] = request.form.get("view_number")
+        result["vote_number"] = request.form.get("vote_number")
+        result["title"] = request.form.get("title")
+        result["message"] = request.form.get("message")
+        if request.files:
+            image = request.files["images"]
+            if image.filename != "":
+                path = os.path.join(app.config["UPLOAD_FOLDER"], secure_filename(image.filename))
+                image.save(path)
+                result["images"] = "../static/images/" + secure_filename(image.filename)
+        questions.insert(0, result)
+        data_handler.save_data_to_csv(
+            questions, "sample_data/question.csv", data_handler.DATA_HEADER
+        )
+        return redirect("/list")
 
 
 if __name__ == "__main__":
-    app.run(debug=True, # Allow verbose error reports
-        port=5000 )
+    app.run(debug=True, port=5000)  # Allow verbose error reports
