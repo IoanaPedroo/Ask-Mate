@@ -11,7 +11,7 @@ app.config["UPLOAD_FOLDER"] = os.path.join(
 
 @app.route("/")
 def hello():
-    return "Hello World!"
+    return redirect("/list")
 
 
 @app.route('/list/<question_id>', methods=['GET', 'POST'])
@@ -23,8 +23,7 @@ def display_question(question_id):
         if 'question_message' in request.form:
             new_question=[request.form['question_message'],request.form['title']] 
             data_handler.write_question(new_question, question_id)
-        answers=data_handler.get_answers(question_id)
-    return render_template('question.html',question=data_handler.get_question(question_id), answers=data_handler.get_answers(question_id), question_id=question_id )
+    return render_template('question.html',question=data_handler.get_question(question_id), answers=data_handler.get_answers(question_id), question_id=question_id)
 
 
 @app.route('/list/<question_id>/new-answer')
@@ -88,6 +87,13 @@ def edit_question(question_id):
 def list_q():
     questions = data_handler.get_questions("sample_data/question.csv")
     header = data_handler.DATA_HEADER
+    order_by = "title"
+    if request.args.get("order_by"):
+        order_by = request.args.get("order_by")
+    order_direction = "ASC"
+    if request.args.get("order_direction"):
+        order_direction = request.args.get("order_direction")
+    questions = data_handler.sort_q(questions, order_by, order_direction)
     return render_template("list.html", questions=questions, header=header)
 
 
@@ -110,7 +116,7 @@ def add_q(id=None):
                 path = os.path.join(app.config["UPLOAD_FOLDER"], secure_filename(image.filename))
                 image.save(path)
                 result["images"] = "../static/images/" + secure_filename(image.filename)
-        questions.insert(0, result)
+        questions.append(result)
         data_handler.save_data_to_csv(
             questions, "sample_data/question.csv", data_handler.DATA_HEADER
         )

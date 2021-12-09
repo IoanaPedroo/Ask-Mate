@@ -20,21 +20,26 @@ DATA_HEADER1 = [
     "message",
     "images",
 ]
-ALLOWED_EXTENSIONS = set(["txt", "pdf", "png", "jpg", "jpeg", "gif"])
 
 
+def sort_q(questions, order_by, order_direction):
+    if order_direction == "ASC":
+        order_direction = False
+    elif order_direction == "DESC":
+        order_direction = True
+    print(order_direction)
+    questions = sorted(questions, key=lambda t: t[order_by], reverse=order_direction)
+    return questions
+  
+        
 def get_questions(file):
     result = []
     with open(f"{os.path.dirname(sys.argv[0])}/{file}", newline="") as csv_file:
         reader = csv.DictReader(csv_file)
         for element in reader:
             result.append(element)
-    final = sorted(result, key=itemgetter("id"), reverse=True)
-    return final
-
-
-def allowed_file(filename):
-    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+    result = sorted(result, key=itemgetter("id"), reverse=True)
+    return result
 
 
 def save_data_to_csv(story_database, file, data):
@@ -51,6 +56,7 @@ def write(results):
         writer.writeheader()
         for story in results:
             writer.writerow(story) 
+
 
 def get_answers(question_id):
     answers=[]
@@ -94,13 +100,13 @@ def write_question(new_question, question_id):
     write(questions)
     
 
-
 def delete_function(question_id):
     results = get_questions('sample_data/question.csv')
     for result in results:
         if result['id']==question_id:
             results.remove(result)
     write(results) 
+
 
 def delete_answer(answer_id, question_id):
     answers=get_answers(question_id)
