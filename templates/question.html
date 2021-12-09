@@ -8,14 +8,19 @@
         <h1>DUNNO LAND</h1>
         <br>
         <h2>
-            Question: {{'   '.join(question)}}
+            Question: {{question['title']}}, {{question['question_message']}}<br>
         </h2>
+        <p>Question votes:{{question['vote_number']}}</p>
         <form action = '{{url_for("delete", question_id = question_id)}}' method="POST">
             <button type = 'submit' name='delete'>Delete question</button>
         </form>
         <form action = '{{url_for("edit_question", question_id = question_id) }}', method="POST">
             <button type = 'submit' name='edit'>Edit question</button>
         </form>
+        <form action = '{{url_for("vote_question_up", question_id=question_id)}}' method="POST">
+            <button type = 'submit' name='like'>👍</button></form>
+        <form action = '{{url_for("vote_question_down", question_id=question_id)}}' method="POST">
+            <button type = 'submit' name='hate'>👎</button></form>
         <hr>
         <br>
         <h3>Answers:</h3>
@@ -25,6 +30,10 @@
             <form action = '{{url_for("delete_answer", answer_id = answer["id"], question_id=question_id)}}' method="POST">
                 <button type = 'submit' name='delete'>Delete answer</button>
             </form>
+            <form action = '{{url_for("vote_answer_up", question_id=question_id, answer_id = answer["id"])}}' method="POST">
+                <button type = 'submit' name='like'>👍</button></form>
+            <form action = '{{url_for("vote_answer_down", question_id=question_id, answer_id = answer["id"])}}' method="POST">
+                <button type = 'submit' name='hate'>👎</button></form>
             {%endfor%}
             
         </ul>

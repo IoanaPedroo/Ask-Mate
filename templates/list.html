@@ -37,7 +37,7 @@
             <tbody>
                 {% for dictionary  in questions %}
                     <tr>
-                        <a href='{{url_for("display_question", question_id=question_id)}}'> Question</a>
+                        <a href='{{url_for("display_question", question_id=dictionary["id"] )}}'> Question</a>
                         <td> {{ dictionary['id'] }}</td>
                         <td>{{ dictionary['submission_time'] }}</td>
                         <td>{{ dictionary['view_number'] }}</td>

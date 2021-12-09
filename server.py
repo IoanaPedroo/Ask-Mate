@@ -43,37 +43,17 @@ def delete_answer(answer_id, question_id):
     data_handler.delete_answer(answer_id, question_id)
     return redirect(url_for('display_question', question_id=question_id))
 
-# @app.route('/question/<question_id>/answers', methods=["GET", "POST"])
-# def answer(answer_id, question_id):
-#     if request.method=="POST":
-#      if 'message' in request.form:
-#             new_answer=request.form['message']
-#             data_handler.write_answer(new_answer, question_id)
-#     # answers=data_handler.get_questions('sample_data/answer.csv')
-#     # print(request.args)
-#     # for answer in answers:
-#     #     if answer['id']==answer_id:
-#     #         answer['vote_number'] = int( answer['vote_number'])+1
-#     #         data_handler.save_data_to_csv(answers, 'sample_data/answer.csv', data_handler.DATA_HEADER1)
-#     return render_template('anwers.html',  answers=data_handler.get_dict('sample_data/answer.csv' ))
+
+@app.route('/list/<question_id>/vote-up',methods=["GET", "POST"])
+def vote_question_up(question_id):
+    data_handler.vote_q_up(question_id)
+    return redirect(url_for('display_question', question_id=question_id))
 
 
-
-
-# @app.route('/question/<question_id>/answers/vote',methods=["GET", "POST"])
-# def vote():
-#     if vote=='LIKE':
-#         answers=data_handler.get_questions('sample_data/answer.csv')
-#         for answer in answers:
-#             if answer['id']==answer_id:
-#                 answer['vote_number'] =  int( answer['vote_number'])+1
-#                 data_handler.save_data_to_csv(answers, 'sample_data/answer.csv', data_handler.DATA_HEADER1)
-#     elif vote=='HATRED':
-#         for answer in answers:
-#             if answer['id']==answer_id:
-#                 answer['vote_number'] =  int( answer['vote_number'])-1
-#                 data_handler.save_data_to_csv(answers, 'sample_data/answer.csv', data_handler.DATA_HEADER1)
-#     return render_template('answers.html')
+@app.route('/list/<question_id>/vote-down',methods=["GET", "POST"])
+def vote_question_down(question_id):
+    data_handler.vote_q_down(question_id)
+    return redirect(url_for('display_question', question_id=question_id))   
 
 
 
@@ -115,6 +95,20 @@ def add_q(id=None):
             questions, "sample_data/question.csv", data_handler.DATA_HEADER
         )
         return redirect("/list")
+
+
+@app.route('/list/<question_id>/<answer_id>/vote_up',  methods=['GET', "POST"])
+def vote_answer_up(question_id, answer_id):
+    data_handler.vote_a_up(question_id,answer_id)
+    return redirect(url_for('display_question', question_id=question_id))
+
+
+
+@app.route('/list/<question_id>/<answer_id>/vote-down',  methods=['GET', "POST"])
+def vote_answer_down(question_id, answer_id):
+    data_handler.vote_a_down(question_id,answer_id)
+    return redirect(url_for('display_question', question_id=question_id))
+
 
 
 if __name__ == "__main__":

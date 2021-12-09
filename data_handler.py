@@ -10,7 +10,7 @@ DATA_HEADER = [
     "vote_number",
     "title",
     "message",
-    "images",
+    "image",
 ]
 DATA_HEADER1 = [
     "id",
@@ -18,7 +18,7 @@ DATA_HEADER1 = [
     "vote_number",
     "question_id",
     "message",
-    "images",
+    "image",
 ]
 ALLOWED_EXTENSIONS = set(["txt", "pdf", "png", "jpg", "jpeg", "gif"])
 
@@ -66,9 +66,7 @@ def get_question(question_id):
     results = get_questions('sample_data/question.csv')
     for result in results:
         if result['id']==question_id:
-            question.append(result['title'])
-            question.append(result['message'])
-    return question
+            return result
 
 
 def get_len(file):
@@ -108,3 +106,47 @@ def delete_answer(answer_id, question_id):
         if answer['id'] == answer_id:
             answers.remove(answer)
             save_data_to_csv(answers, "sample_data/answer.csv",  DATA_HEADER1)
+
+
+
+def vote_q_up(question_id):
+    questions=get_questions('sample_data/question.csv')
+    for question in questions:
+        if question['id']==question_id:
+            question['vote_number'] = int(question['vote_number'])+1
+    write(questions)
+
+
+
+def vote_q_down(question_id):
+    questions=get_questions('sample_data/question.csv')
+    for question in questions:
+        if question['id']==question_id:
+            question['vote_number'] = int(question['vote_number'])-1
+    write(questions)
+
+
+def vote_a_up(question_id,answer_id):
+    answers=get_answers(question_id)
+    for answer in answers:
+        if answer['id']==answer_id:
+            answer['vote_number'] = int(answer['vote_number'])+1
+    with open('sample_data/answer.csv', 'w', newline='') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=DATA_HEADER1)
+        writer.writeheader()
+        for story in answers:
+            if story['question_id']==question_id:
+                writer.writerow(story)
+
+
+def vote_a_down(question_id,answer_id):
+    answers=get_answers(question_id)
+    for answer in answers:
+        if answer['id']==answer_id:
+            answer['vote_number'] = int(answer['vote_number'])-1
+    with open('sample_data/answer.csv', 'w', newline='') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=DATA_HEADER1)
+        writer.writeheader()
+        for story in answers:
+            if story['question_id']==question_id:
+                writer.writerow(story)
