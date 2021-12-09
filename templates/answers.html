@@ -11,12 +11,12 @@
         <ul>
             {% for answer in answers%}
             <li>ID:{{answer['id']}},{{answer['message']}} vote number:{{answer['vote_number']}}</li>
-            <form action = '{{url_for("answer", answer_id=1, question_id=1)}}'>
+            <form action = '{{url_for("answer", answer_id=answer_id, question_id=question_id)}}'>
                 <button type = 'submit' name='vote_up'>LIKE</button>
-            <form action = '{{url_for("answer",answer_id=1, question_id=1)}}'>
+            <form action = '{{url_for("answer",answer_id=answer_id, question_id=question_id)}}'>
                 <button type = 'submit' name='vote_down'>HATRED</button>
             {%endfor%}
         </ul>
-        <a href='{{ url_for("answer", question_id=1,answer_id=1 ) }}'>Post a new answer</a>
+        <a href='{{ url_for("answer", question_id=question_id,answer_id=answer_id ) }}'>Post a new answer</a>
     </body>
 </html>
