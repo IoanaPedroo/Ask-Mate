@@ -1,64 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>ask</title>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <style>
-    table, th, td {
-        border:1px solid black;
-        object-position: center;
-        width: 1500px;
-        padding: 15px;
-    }
-    h1, a {
-        font-family: Consolas;
-    }
-    h1 {
-        font-size: 50px;
-        object-position: center;
-    }
-    a {
-        font-size: 20px;
-
-    }
-    .img-thumbnail{
-        width: 200px;
-        height: 200px;
-    }
-    </style>
-</head>
+    <head>
+        <meta charset="UTF-8" />
+        <title>ask</title>
+        <link
+            rel="stylesheet"
+            href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+            integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+            crossorigin="anonymous"
+        />
+        <style>
+            table,
+            th,
+            td {
+                border: 1px solid black;
+                object-position: center;
+                width: 1500px;
+                padding: 15px;
+            }
+            h1,
+            a {
+                font-family: Consolas;
+            }
+            h1 {
+                font-size: 50px;
+                object-position: center;
+            }
+            a {
+                font-size: 20px;
+            }
+            .img-thumbnail {
+                width: 200px;
+                height: 200px;
+            }
+        </style>
+    </head>
     <body>
-    <h1>ASK MATE1</h1>
+        <div class="container">
+        <h1>ASK MATE1</h1>
+        <p><a href="{{ url_for('add_q') }}">Add Question</a></p>
         <table class="table table-bordered">
             <thead>
-                <a href='/add-question'>Add Question</a>
                 <tr>
                     {% for col in header %}
-                        <th>{{ col.capitalize() }}
-                        <a href='{{url_for("list_q", order_by=col, order_direction="ASC")}}'>ASC</a>
-                        <a href='{{url_for("list_q", order_by=col, order_direction="DESC")}}'>DESC</a>
-                        </th>
+                    <th>
+                        {{ col.capitalize() }}
+                        <a
+                            href="{{url_for('list_q', order_by=col, order_direction='ASC')}}"
+                            >ASC</a
+                        >
+                        <a
+                            href="{{url_for('list_q', order_by=col, order_direction='DESC')}}"
+                            >DESC</a
+                        >
+                    </th>
                     {% endfor %}
                 </tr>
             </thead>
             <tbody>
-                {% for dictionary  in questions %}
-                    <tr>
-                        <td><a href='{{url_for("display_question", question_id=dictionary["id"])}}'> {{ dictionary['id'] }} </a></td>
-                        <td>{{ dictionary['submission_time'] }}</td>
-                        <td>{{ dictionary['view_number'] }}</td>
-                        <td>{{ dictionary['vote_number'] }}</td>
-                        <td>{{ dictionary['title'] }}</td>
-                        <td>{{ dictionary['message'] }}</td>
-                        <td>
-                            {% if dictionary['images'] %}
-                            <img src="{{ dictionary['images'] }}" alt="{{ dictionary['images'] }}" class="img-thumbnail">
-                            {% endif %}
-                        </td>
-                    </tr>
+                {% for dictionary in questions %}
+                <tr>
+                    <td>
+                        <a
+                            href="{{url_for('display_question', question_id=dictionary['id'])}}"
+                        >
+                            {{ dictionary["id"] }}
+                        </a>
+                    </td>
+                    <td>{{ dictionary["submission_time"] }}</td>
+                    <td>{{ dictionary["view_number"] }}</td>
+                    <td>{{ dictionary["vote_number"] }}</td>
+                    <td>{{ dictionary["title"] }}</td>
+                    <td>{{ dictionary["message"] }}</td>
+                    <td>
+                        {% if dictionary.images %}
+                        <img
+                            src="{{ dictionary['images'] }}"
+                            alt="{{ dictionary['images'] }}"
+                            class="img-thumbnail"
+                        />
+                        {% endif %}
+                    </td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>
+        </div>
     </body>
 </html>

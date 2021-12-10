@@ -5,84 +5,95 @@ from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = os.path.join(
-    os.path.dirname(__file__), "static", "images"
+    os.path.dirname(__file__),
+    "static",
+    "images",
 )
 
 
 @app.route("/")
 def hello():
-    return redirect("/list")
+    return redirect(url_for("list_q"))
 
 
-@app.route('/list/<question_id>', methods=['GET', 'POST'])
+@app.route("/list/<question_id>", methods=["GET", "POST"])
 def display_question(question_id):
-    if request.method=="POST":
-        if 'message' in request.form:
-            new_answer = request.form['message']
+    if request.method == "POST":
+        if "message" in request.form:
+            new_answer = request.form["message"]
             data_handler.write_answer(new_answer, question_id)
-        if 'question_message' in request.form:
-            new_question=[request.form['question_message'],request.form['title']] 
+
+        if "question_message" in request.form:
+            new_question = [request.form["question_message"], request.form["title"]]
             data_handler.write_question(new_question, question_id)
-    return render_template('question.html',question=data_handler.get_question(question_id), answers=data_handler.get_answers(question_id), question_id=question_id)
+
+    return render_template(
+        "question.html",
+        question=data_handler.get_question(question_id),
+        answers=data_handler.get_answers(question_id),
+        question_id=question_id,
+    )
 
 
-@app.route('/list/<question_id>/new-answer')
+@app.route("/list/<question_id>/new-answer")
 def new_answer(question_id):
-    return render_template('new_answer.html', question_id=question_id)
+    return render_template("new_answer.html", question_id=question_id)
 
 
-@app.route('/list/<question_id>/delete', methods=['GET', 'POST'])
+@app.route("/list/<question_id>/delete", methods=["GET", "POST", "DELETE"])
 def delete(question_id):
     data_handler.delete_function(question_id)
-    return redirect(url_for('list_q'))
+    return redirect(url_for("list_q"))
 
 
-
-@app.route("/<question_id>/<answer_id>/delete", methods=["GET", "POST"])
+@app.route("/<question_id>/<answer_id>/delete", methods=["GET", "POST", "DELETE"])
 def delete_answer(answer_id, question_id):
     data_handler.delete_answer(answer_id, question_id)
-    return redirect(url_for('display_question', question_id=question_id))
+    return redirect(url_for("display_question", question_id=question_id))
 
 
-@app.route('/list/<question_id>/vote-up',methods=["GET", "POST"])
+def vote_question(id, count):
+    data_handler.vote_question(id, count)
+    return redirect(url_for("display_question", question_id=id))
+
+
+@app.route("/list/<question_id>/vote-up", methods=["GET", "POST"])
 def vote_question_up(question_id):
-    data_handler.vote_q_up(question_id)
-    return redirect(url_for('display_question', question_id=question_id))
+    return vote_question(question_id, 1)
 
 
-@app.route('/list/<question_id>/vote-down',methods=["GET", "POST"])
+@app.route("/list/<question_id>/vote-down", methods=["GET", "POST"])
 def vote_question_down(question_id):
-    data_handler.vote_q_down(question_id)
-    return redirect(url_for('display_question', question_id=question_id))   
+    return vote_question(question_id, -1)
 
 
-
-
-@app.route('/list/<question_id>/edit', methods=['GET', "POST"])
+@app.route("/list/<question_id>/edit", methods=["GET", "POST"])
 def edit_question(question_id):
-    return render_template('edit.html', question= data_handler.get_question(question_id), question_id=question_id)
-   
+    return render_template(
+        "edit.html",
+        question=data_handler.get_question(question_id),
+        question_id=question_id,
+    )
 
 
 @app.route("/list")
 def list_q():
     questions = data_handler.get_questions("sample_data/question.csv")
     header = data_handler.DATA_HEADER
-    order_by = "title"
-    if request.args.get("order_by"):
-        order_by = request.args.get("order_by")
-    order_direction = "ASC"
-    if request.args.get("order_direction"):
-        order_direction = request.args.get("order_direction")
+    order_by = request.args.get("order_by") if request.args.get("order_by") else "title"
+    order_direction = (
+        request.args.get("order_direction")
+        if request.args.get("order_direction")
+        else "ASC"
+    )
+
     questions = data_handler.sort_q(questions, order_by, order_direction)
     return render_template("list.html", questions=questions, header=header)
 
 
 @app.route("/add-question", methods=["GET", "POST"])
 def add_q(id=None):
-    if request.method == "GET":
-        return render_template("add-question.html", id=id)
-    elif request.method == "POST":
+    if request.method == "POST":
         questions = data_handler.get_questions("sample_data/question.csv")
         result = {}
         result["id"] = len(questions) + 1
@@ -94,28 +105,36 @@ def add_q(id=None):
         if request.files:
             image = request.files["images"]
             if image.filename != "":
-                path = os.path.join(app.config["UPLOAD_FOLDER"], secure_filename(image.filename))
+                path = os.path.join(
+                    app.config["UPLOAD_FOLDER"],
+                    secure_filename(image.filename),
+                )
                 image.save(path)
                 result["images"] = "../static/images/" + secure_filename(image.filename)
         questions.append(result)
+
         data_handler.save_data_to_csv(
-            questions, "sample_data/question.csv", data_handler.DATA_HEADER
+            questions,
+            "sample_data/question.csv",
+            data_handler.DATA_HEADER,
         )
-        return redirect("/list")
+        return redirect(url_for("list_q"))
+    return render_template("add-question.html", id=id)
 
 
-@app.route('/list/<question_id>/<answer_id>/vote_up',  methods=['GET', "POST"])
+def vote_answer(qid, aid, count):
+    data_handler.vote_answer(qid, aid, count)
+    return redirect(url_for("display_question", question_id=qid))
+
+
+@app.route("/list/<question_id>/<answer_id>/vote_up", methods=["GET", "POST"])
 def vote_answer_up(question_id, answer_id):
-    data_handler.vote_a_up(question_id,answer_id)
-    return redirect(url_for('display_question', question_id=question_id))
+    return vote_answer(question_id, answer_id, 1)
 
 
-
-@app.route('/list/<question_id>/<answer_id>/vote-down',  methods=['GET', "POST"])
+@app.route("/list/<question_id>/<answer_id>/vote-down", methods=["GET", "POST"])
 def vote_answer_down(question_id, answer_id):
-    data_handler.vote_a_down(question_id,answer_id)
-    return redirect(url_for('display_question', question_id=question_id))
-
+    return vote_answer(question_id, answer_id, -1)
 
 
 if __name__ == "__main__":
