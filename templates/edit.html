@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Q$A</title>
+        <link
+            rel="stylesheet"
+            href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+            integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+            crossorigin="anonymous"
+        />
+    </head>
+    <body>
+        <div class="container">
+            <h1>Edit question</h1>
+            <form
+                action='{{url_for("display_question", question_id=question_id)}}'
+                method="post"
+            >
+                <label class="form-label" for="message"
+                    >Edit question message</label
+                ><br />
+                <textarea
+                    id="question_message"
+                    class="form-control"
+                    name="question_message"
+                >
+{{question[1]}}</textarea
+                >
+
+                <label class="form-label" for="message"
+                    >Edit question title</label
+                ><br />
+                <textarea id="title" class="form-control" name="title">
+{{question[0]}}</textarea
+                >
+                <button class="btn btn-primary" type="submit">
+                    Submit question
+                </button>
+            </form>
+        </div>
+    </body>
+</html>

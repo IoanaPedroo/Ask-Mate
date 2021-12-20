@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Title</title>
+        <link
+            rel="stylesheet"
+            href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+            integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+            crossorigin="anonymous"
+        />
+    </head>
+    <body>
+        <div class="container">
+            <h1>ADD A NEW QUESTION</h1>
+            <form
+                method="post"
+                action="{{ url_for('add_q') }}"
+                enctype="multipart/form-data"
+            >
+                <label for="time" class="form-label">Submission time:</label>
+                <input
+                    id="time"
+                    class="form-control"
+                    type="number"
+                    minlength="5"
+                    name="submission_time"
+                />
+                <label for="view" class="form-control">View number</label>
+                <input
+                    id="view"
+                    class="form-control"
+                    type="number"
+                    minlength="5"
+                    name="view_number"
+                />
+                <label for="votes" class="form-label">Vote number:</label>
+                <input
+                    if="votes"
+                    class="form-control"
+                    type="number"
+                    minlength="5"
+                    name="vote_number"
+                />
+                <label for="title" class="form-label">Title:</label>
+                <input
+                    type="text"
+                    name="title"
+                    id="title"
+                    class="form-control"
+                />
+                <label for="message" class="form-label">Message:</label>
+                <textarea
+                    name="message"
+                    id="message"
+                    class="form-control"
+                ></textarea>
+                <label for="images" class="form-label">Image:</label>
+                <input
+                    type="file"
+                    name="images"
+                    id="images"
+                    accept="image/*"
+                    class="form-control"
+                />
+                <button class="btn btn-primary" type="submit">
+                    Add new question
+                </button>
+            </form>
+        </div>
+    </body>
+</html>
