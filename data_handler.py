@@ -136,3 +136,14 @@ def vote_answer(cursor, answer_id, count):
             WHERE id = %(answer_id)s;
             """
     cursor.execute(query, {'answer_id': answer_id})
+
+
+@data_connection.connection_handler
+def edit_question(cursor, question_id, edited_title, edited_message):
+    query = """
+            UPDATE question
+            SET title = %(edited_title)s, message = %(edited_message)s
+            WHERE id = %(question_id)s;
+            """
+    cursor.execute(query, {'question_id': question_id, 'edited_title': edited_title, 'edited_message': edited_message})
+

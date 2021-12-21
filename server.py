@@ -14,13 +14,10 @@ app.config["UPLOAD_FOLDER"] = os.path.join(
 @app.route("/list/<question_id>", methods=["GET", "POST"])
 def display_question(question_id):
     if request.method == "POST":
-        if "message" in request.form:
-            new_answer = request.form["message"]
-            data_handler.add_new_data_to_table(new_answer, question_id)
-
         if "question_message" in request.form:
-            new_question = [request.form["question_message"], request.form["title"]]
-            data_handler.write_question(new_question, question_id)
+            new_message = request.form["question_message"]
+            new_title = request.form["title"]
+            data_handler.edit_question(question_id, new_message, new_title)
 
     return render_template(
         "question.html",
@@ -33,13 +30,13 @@ def display_question(question_id):
 @app.route("/list/<question_id>/new-answer", methods=["GET", "POST"])
 def new_answer(question_id):
     if request.method == "POST":
-        result = {
-            "vote_number": 0,
-            "message": request.form.get("message"),
-            "question_id": question_id,
-            "image": None}
+        result = {}
+        result["vote_number"] = 0
+        result["message"] = request.form.get("message")
+        result["question_id"] = question_id
+        result["image"] = None
         data_handler.add_new_data_to_table(result, 'answer')
-        return redirect(url_for("display_question"))
+        return redirect(url_for("display_question", question_id=question_id))
     return render_template("new_answer.html", question_id=question_id)
 
 
@@ -50,8 +47,8 @@ def delete(question_id):
 
 
 @app.route("/<question_id>/<answer_id>/delete", methods=["GET", "POST", "DELETE"])
-def delete_answer(answer_id, question_id):
-    data_handler.delete_answer(answer_id, question_id)
+def delete_answer(question_id, answer_id):
+    data_handler.delete_answer(question_id, answer_id)
     return redirect(url_for("display_question", question_id=question_id))
 
 
@@ -81,7 +78,7 @@ def edit_question(question_id):
 @app.route("/")
 @app.route("/list")
 def list_q():
-    order_by = request.args.get("order_by") if request.args.get("order_by") else "title"
+    order_by = request.args.get("order_by") if request.args.get("order_by") else "id"
     order_direction = (
         request.args.get("order_direction")
         if request.args.get("order_direction")
