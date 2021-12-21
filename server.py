@@ -11,11 +11,6 @@ app.config["UPLOAD_FOLDER"] = os.path.join(
 )
 
 
-@app.route("/")
-def hello():
-    return redirect(url_for("list_q"))
-
-
 @app.route("/list/<question_id>", methods=["GET", "POST"])
 def display_question(question_id):
     if request.method == "POST":
@@ -67,19 +62,17 @@ def vote_question_down(question_id):
     return vote_question(question_id, -1)
 
 
-@app.route("/list/<question_id>/edit", methods=["GET", "POST"])
-def edit_question(question_id):
-    return render_template(
-        "edit.html",
-        question=data_handler.get_question(question_id),
-        question_id=question_id,
-    )
+# @app.route("/list/<question_id>/edit", methods=["GET", "POST"])
+# def edit_question(question_id):
+#     return render_template(
+#         "edit.html",
+#         question=data_handler.get_question(question_id),
+#         question_id=question_id,
+#     )
 
-
+@app.route("/")
 @app.route("/list")
 def list_q():
-    questions = data_handler.get_questions("sample_data/question.csv")
-    header = data_handler.DATA_HEADER
     order_by = request.args.get("order_by") if request.args.get("order_by") else "title"
     order_direction = (
         request.args.get("order_direction")
@@ -87,14 +80,13 @@ def list_q():
         else "ASC"
     )
 
-    questions = data_handler.sort_q(questions, order_by, order_direction)
-    return render_template("list.html", questions=questions, header=header)
+    questions = data_handler.sort_q(order_by, order_direction)
+    return render_template("list.html", questions=questions)
 
 
 @app.route("/add-question", methods=["GET", "POST"])
 def add_q(id=None):
     if request.method == "POST":
-        questions = data_handler.get_questions("sample_data/question.csv")
         result = {}
         result["id"] = len(questions) + 1
         result["submission_time"] = request.form.get("submission_time")
@@ -113,11 +105,7 @@ def add_q(id=None):
                 result["images"] = "../static/images/" + secure_filename(image.filename)
         questions.append(result)
 
-        data_handler.save_data_to_csv(
-            questions,
-            "sample_data/question.csv",
-            data_handler.DATA_HEADER,
-        )
+
         return redirect(url_for("list_q"))
     return render_template("add-question.html", id=id)
 
