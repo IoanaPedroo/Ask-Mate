@@ -20,20 +20,22 @@ def get_questions(cursor):
 
 
 @data_connection.connection_handler
-def get_answers(cursor, answer_id):
-    querry = """
+def get_answers(cursor, question_id):
+    query = """
             SELECT * FROM answer
+            WHERE question_id=%(question_id)s
+            ORDER BY id;
         """
-    cursor.execute(querry, {'answer_id': answer_id})
+    cursor.execute(query, {'question_id': question_id})
     return cursor.fetchall()
 
 
 @data_connection.connection_handler
 def get_question(cursor, question_id):
-    querry = """
+    query = """
         SELECT * FROM question where id = %(question_id)s;
     """
-    cursor.execute(querry, {'question_id': question_id})
+    cursor.execute(query, {'question_id': question_id})
     return cursor.fetchone()
 
 @data_connection.connection_handler
@@ -60,7 +62,8 @@ def add_new_data_to_table(cursor, result, content):
                         'vote_number': result['vote_number'],
                         'question_id': result['question_id'],
                         'message': result['message'],
-                        'image': result['image']})
+                        'image': result['image']}
+                       )
 
     elif content == "comment":
         cursor.execute("""
@@ -71,41 +74,65 @@ def add_new_data_to_table(cursor, result, content):
                         'answer_id': result['answer_id'],
                         'message': result['message'],
                         'submission_time': date,
-                        'edited_count': result['edited_count']})
+                        'edited_count': result['edited_count']}
+                       )
 
 
 @data_connection.connection_handler
 def delete_function(cursor, question_id):
-    querry = """
-    DELETE FROM question WHERE id = %(question_id)s; """
-    cursor.execute(querry, {'question_id': question_id})
-    cursor.fetchone()
+    query = """
+    DELETE FROM comment
+       WHERE question_id = %(question_id)s;
+       
+       DELETE FROM answer
+       WHERE question_id = %(question_id)s;
+       
+       DELETE FROM question_tag
+       WHERE question_id = %(question_id)s;
+       
+       DELETE FROM question
+       WHERE id = %(question_id)s;
+       """
+    cursor.execute(query, {'question_id': question_id})
 
 
 @data_connection.connection_handler
-def delete_answer(cursor):
-    querry = """
+def delete_answer(cursor, question_id, answer_id):
+    query = """
                 DELETE FROM comment
                 WHERE question_id = %(question_id)s AND answer_id = %(answer_id)s;
                 DELETE FROM answer
                 WHERE id = %(answer_id)s;
                 """
-    cursor.execute(querry)
+    cursor.execute(query, {'question_id': question_id, 'answer_id': answer_id})
 
 @data_connection.connection_handler
-def vote_question(cursor):
-    querry = """
-    UPDATE question SET vote_number = vote_number + 1
-    WHERE id = %(question_id)s;
-    """
-    cursor.execute(querry)
-
-
-@data_connection.connection_handler
-def vote_answer(cursor):
-    querry = """
-        UPDATE answer
-        SET vote_number = vote_number + 1
-        WHERE question_id = %(question_id)s AND id = %(answer_id)s;
+def vote_question(cursor, question_id, count):
+    if count == 'up':
+        query = """
+        UPDATE question SET vote_number = vote_number + 1
+        WHERE id = %(question_id)s;
         """
-    cursor.execute(querry)
+    else:
+        query = """
+                UPDATE question SET vote_number = vote_number - 1
+                WHERE id = %(question_id)s;
+                """
+    cursor.execute(query, {'question_id': question_id})
+
+
+@data_connection.connection_handler
+def vote_answer(cursor, answer_id, count):
+    if count == 'up':
+        query = """
+            UPDATE answer
+            SET vote_number = vote_number + 1
+            WHERE id = %(answer_id)s;
+            """
+    else:
+        query = """
+            UPDATE answer
+            SET vote_number = vote_number - 1
+            WHERE id = %(answer_id)s;
+            """
+    cursor.execute(query, {'answer_id': answer_id})

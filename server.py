@@ -16,7 +16,7 @@ def display_question(question_id):
     if request.method == "POST":
         if "message" in request.form:
             new_answer = request.form["message"]
-            data_handler.write_answer(new_answer, question_id)
+            data_handler.add_new_data_to_table(new_answer, question_id)
 
         if "question_message" in request.form:
             new_question = [request.form["question_message"], request.form["title"]]
@@ -30,8 +30,16 @@ def display_question(question_id):
     )
 
 
-@app.route("/list/<question_id>/new-answer")
+@app.route("/list/<question_id>/new-answer", methods=["GET", "POST"])
 def new_answer(question_id):
+    if request.method == "POST":
+        result = {
+            "vote_number": 0,
+            "message": request.form.get("message"),
+            "question_id": question_id,
+            "image": None}
+        data_handler.add_new_data_to_table(result, 'answer')
+        return redirect(url_for("display_question"))
     return render_template("new_answer.html", question_id=question_id)
 
 
@@ -54,21 +62,21 @@ def vote_question(id, count):
 
 @app.route("/list/<question_id>/vote-up", methods=["GET", "POST"])
 def vote_question_up(question_id):
-    return vote_question(question_id, 1)
+    return vote_question(question_id, 'up')
 
 
 @app.route("/list/<question_id>/vote-down", methods=["GET", "POST"])
 def vote_question_down(question_id):
-    return vote_question(question_id, -1)
+    return vote_question(question_id, 'down')
 
 
-# @app.route("/list/<question_id>/edit", methods=["GET", "POST"])
-# def edit_question(question_id):
-#     return render_template(
-#         "edit.html",
-#         question=data_handler.get_question(question_id),
-#         question_id=question_id,
-#     )
+@app.route("/list/<question_id>/edit", methods=["GET", "POST"])
+def edit_question(question_id):
+    return render_template(
+        "edit.html",
+        question=data_handler.get_question(question_id),
+        question_id=question_id,
+    )
 
 @app.route("/")
 @app.route("/list")
@@ -88,10 +96,8 @@ def list_q():
 def add_q(id=None):
     if request.method == "POST":
         result = {}
-        result["id"] = len(questions) + 1
-        result["submission_time"] = request.form.get("submission_time")
-        result["view_number"] = request.form.get("view_number")
-        result["vote_number"] = request.form.get("vote_number")
+        result["view_number"] = 0
+        result["vote_number"] = 0
         result["title"] = request.form.get("title")
         result["message"] = request.form.get("message")
         if request.files:
@@ -102,27 +108,25 @@ def add_q(id=None):
                     secure_filename(image.filename),
                 )
                 image.save(path)
-                result["images"] = "../static/images/" + secure_filename(image.filename)
-        questions.append(result)
-
-
+                result["image"] = "../static/images/" + secure_filename(image.filename)
+        data_handler.add_new_data_to_table(result, 'question')
         return redirect(url_for("list_q"))
     return render_template("add-question.html", id=id)
 
 
-def vote_answer(qid, aid, count):
-    data_handler.vote_answer(qid, aid, count)
-    return redirect(url_for("display_question", question_id=qid))
+def vote_answer(question_id, answer_id, count):
+    data_handler.vote_answer(answer_id, count)
+    return redirect(url_for("display_question", question_id=question_id, answer_id=answer_id))
 
 
 @app.route("/list/<question_id>/<answer_id>/vote_up", methods=["GET", "POST"])
 def vote_answer_up(question_id, answer_id):
-    return vote_answer(question_id, answer_id, 1)
+    return vote_answer(question_id, answer_id, 'up')
 
 
 @app.route("/list/<question_id>/<answer_id>/vote-down", methods=["GET", "POST"])
 def vote_answer_down(question_id, answer_id):
-    return vote_answer(question_id, answer_id, -1)
+    return vote_answer(question_id, answer_id, 'down')
 
 
 if __name__ == "__main__":

@@ -25,14 +25,14 @@
                     class="form-control"
                     name="question_message"
                 >
-{{question[1]}}</textarea
+{{question['title']}}</textarea
                 >
 
                 <label class="form-label" for="message"
                     >Edit question title</label
                 ><br />
                 <textarea id="title" class="form-control" name="title">
-{{question[0]}}</textarea
+{{question['message']}}</textarea
                 >
                 <button class="btn btn-primary" type="submit">
                     Submit question
