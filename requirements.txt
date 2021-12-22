@@ -1,27 +1,14 @@
-Usage: dotenv [OPTIONS] COMMAND [ARGS]...
-
-  This script is used to set, get or unset values from a .env file.
-
-Options:
-  -f, --file PATH                 Location of the .env file, defaults to .env
-                                  file in current working directory.
-  -q, --quote [always|never|auto]
-                                  Whether to quote or not the variable values.
-                                  Default mode is always. This does not affect
-                                  parsing.
-  -e, --export BOOLEAN            Whether to write the dot file as an
-                                  executable bash script.
-  --version                       Show the version and exit.
-  --help                          Show this message and exit.
-
-Commands:
-  get    Retrieve the value for the given key.
-  list   Display all the stored key/value.
-  run    Run command with environment variables present.
-  set    Store the given key/value.
-  unset  Removes the given key.
-
-Flask~=2.0.2
-Werkzeug~=2.0.2
-psycopg2~=2.9.2
-python-dotenv~=0.19.2
+black==21.12b0
+click==8.0.3
+Flask==2.0.2
+itsdangerous==2.0.1
+Jinja2==3.0.3
+MarkupSafe==2.0.1
+mypy-extensions==0.4.3
+pathspec==0.9.0
+platformdirs==2.4.0
+psycopg2-binary==2.9.2
+python-dotenv==0.19.2
+tomli==1.2.3
+typing-extensions==4.0.1
+Werkzeug==2.0.2
