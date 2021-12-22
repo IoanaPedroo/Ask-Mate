@@ -1,6 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
+{% extends "layout.html" %}
+
+{% block content %}
+
         <meta charset="UTF-8" />
         <title>Title</title>
         <link
@@ -9,10 +10,9 @@
             integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
             crossorigin="anonymous"
         />
-    </head>
-    <body>
+
         <div class="container">
-            <h1>ADD A NEW QUESTION</h1>
+            <h1 class="placeholder text-uppercase mb-4 font-weight-bold col-12 bg-warning mb-0 text-center">ADD A NEW QUESTION</h1>
             <form
                 method="post"
                 action="{{ url_for('add_q') }}"
@@ -24,12 +24,17 @@
                     name="title"
                     id="title"
                     class="form-control"
+                    placeholder="Type a name for your question..."
+                    required
                 />
                 <label for="message" class="form-label">Message:</label>
                 <textarea
                     name="message"
                     id="message"
                     class="form-control"
+                    rows="3"
+                    placeholder="Type message..."
+                    required
                 ></textarea>
                 <label for="images" class="form-label">Image:</label>
                 <input
@@ -39,10 +44,9 @@
                     accept="image/*"
                     class="form-control"
                 />
-                <button class="btn btn-primary" type="submit">
+                <button class="btn btn-dark" type="submit">
                     Add new question
                 </button>
             </form>
         </div>
-    </body>
-</html>
+{% endblock %}

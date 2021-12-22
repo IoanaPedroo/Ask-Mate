@@ -182,20 +182,34 @@ def edit_answer(question_id, answer_id):
         data_handler.edit_question_answer(edited_answer)
         return redirect(url_for("display_question", question_id=question_id))
     return render_template(
-        "edit.html",
-        question=data_handler.get_answer(answer_id),
-        question_id=answer_id,
+        "edit_answer.html",
+        answer=data_handler.get_answer(answer_id),
+        answer_id=answer_id,
+        question_id=question_id
     )
 
 
-@app.route("/search")
+@app.route("/search", methods=["POST"])
 def search_words():
-    search_phrase = request.form.get("search_phrase", None)
-    if search_phrase:
-        posts = data_handler.get_query(search_phrase)
-    else:
-        posts = data_handler.get_questions()
-    return render_template("list.html", questions=posts)
+    if request.method == 'POST':
+        search_phrase = request.form.get("search_phrase")
+        if search_phrase:
+            posts = data_handler.get_query(search_phrase)
+        else:
+            posts = data_handler.get_questions()
+        return render_template("list.html", questions=posts)
+
+
+@app.route('/list/<question_id>/<comment_id>/edit', methods=["GET", "POST"])
+def edit_comment(question_id, comment_id):
+    if request.method == 'POST':
+        updated_comment = request.form.get("message")
+        data_handler.edit_comment(comment_id, updated_comment)
+        return redirect(url_for("display_question",
+                                question_id=question_id))
+    return redirect(url_for("display_question",
+                            question_id=question_id))
+
 
 
 if __name__ == "__main__":

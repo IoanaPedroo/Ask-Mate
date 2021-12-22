@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+        <meta charset="utf-8" />
+        <title>Q$a</title>
+        <link
+            rel="stylesheet"
+            href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+            integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+            crossorigin="anonymous"
+        />
+
+        <div class="container">
+            <h1 class="placeholder text-uppercase mb-4 font-weight-bold col-12 bg-warning mb-0 text-center">Edit answer</h1>
+            <form
+                action='{{url_for("edit_answer", question_id=question_id, answer_id=answer_id)}}'
+                method="post"
+            >
+                <label class="form-label" for="message"
+                    >Edit answer message</label
+                ><br />
+                <textarea id="message" class="form-control" name="message" rows="3" required>
+{{answer['message']}}</textarea
+                >
+                <br/>
+                <button class="btn btn-primary" type="submit">
+                    Submit answer
+                </button>
+            </form>
+        </div>
+
+{% endblock %}

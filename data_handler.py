@@ -263,9 +263,10 @@ def increase_view_numbers(cursor, question_id):
 
 
 @data_connection.connection_handler
-def get_query(search):
+def get_query(cursor, search):
     query = """
             SELECT * FROM question
-            WHERE title = %(search)s or message = %(search)s;
+            WHERE title LIKE %(search)s or message LIKE %(search)s;
             """
-    cursor.execute(query, {"search": search})
+    cursor.execute(query, {"search": '%'+search+'%'})
+    return cursor.fetchall()
