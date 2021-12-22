@@ -2,6 +2,17 @@ import data_connection
 
 
 @data_connection.connection_handler
+def get_last_five_question(cursor):
+    query = """
+            SELECT * FROM question
+            ORDER BY submission_time DESC
+            LIMIT 5;
+            """
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+@data_connection.connection_handler
 def sort_q(cursor, order_by, order_direction):
     cursor.execute(f"""
                         SELECT * FROM question 

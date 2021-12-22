@@ -75,16 +75,17 @@ def edit_question(question_id):
         question_id=question_id,
     )
 
+
 @app.route("/")
+def main_page():
+    questions = data_handler.get_last_five_question()
+    return render_template("list.html", questions=questions)
+
+
 @app.route("/list")
 def list_q():
     order_by = request.args.get("order_by") if request.args.get("order_by") else "id"
-    order_direction = (
-        request.args.get("order_direction")
-        if request.args.get("order_direction")
-        else "ASC"
-    )
-
+    order_direction = request.args.get("order_direction") if request.args.get("order_direction") else "ASC"
     questions = data_handler.sort_q(order_by, order_direction)
     return render_template("list.html", questions=questions)
 
@@ -106,6 +107,8 @@ def add_q(id=None):
                 )
                 image.save(path)
                 result["image"] = "../static/images/" + secure_filename(image.filename)
+            else:
+                result["image"] = ""
         data_handler.add_new_data_to_table(result, 'question')
         return redirect(url_for("list_q"))
     return render_template("add-question.html", id=id)
@@ -125,6 +128,18 @@ def vote_answer_up(question_id, answer_id):
 def vote_answer_down(question_id, answer_id):
     return vote_answer(question_id, answer_id, 'down')
 
+
+# @app.route("/list/<question_id>/new-comment", methods=["GET", "POST"])
+# def new_comment(question_id):
+#     if request.method == "POST":
+#         result = {}
+#         result["question_id"] = question_id
+#         result["answer_id"] = answer_id
+#         result["message"] = request.form.get("message")
+#         result["edited_count"] = None
+#         data_handler.add_new_data_to_table(result, 'comment')
+#         return redirect(url_for("display_question", question_id=question_id))
+#     return render_template("new_comment.html", question_id=question_id, answer_id="answer_id")
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)  # Allow verbose error reports

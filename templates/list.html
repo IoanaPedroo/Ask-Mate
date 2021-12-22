@@ -37,23 +37,23 @@
     </head>
     <body>
         <div class="container">
-        <h1>ASK MATE1</h1>
+            <h5><a href="{{ url_for('list_q') }}">ASK MATE1</a></h5>
         <p><a href="{{ url_for('add_q') }}">Add Question</a></p>
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    {% for col in header %}
-                    <th>
-                        {{ col.capitalize() }}
-                        <a
-                            href="{{url_for('list_q', order_by=col, order_direction='ASC')}}"
-                            >ASC</a
-                        >
-                        <a
-                            href="{{url_for('list_q', order_by=col, order_direction='DESC')}}"
-                            >DESC</a
-                        >
-                    </th>
+                    {% for dictionary in questions[0].keys() %}
+                        <th>
+                            {{ dictionary }}
+                            <a
+                                href="{{url_for('list_q', order_by=dictionary, order_direction='ASC')}}"
+                                >ASC</a
+                            >
+                            <a
+                                href="{{url_for('list_q', order_by=dictionary, order_direction='DESC')}}"
+                                >DESC</a
+                            >
+                        </th>
                     {% endfor %}
                 </tr>
             </thead>
