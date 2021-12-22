@@ -11,21 +11,17 @@ app.config["UPLOAD_FOLDER"] = os.path.join(
 )
 
 
-@app.route("/list/<question_id>", methods=["GET", "POST"])
+@app.route("/list/<question_id>")
 def display_question(question_id):
-    if request.method == "POST":
-        if "question_message" in request.form:
-            new_message = request.form["question_message"]
-            new_title = request.form["title"]
-            data_handler.edit_question(question_id, new_message, new_title)
-
+    data_handler.increase_view_numbers(question_id)
     return render_template(
         "question.html",
         question=data_handler.get_question(question_id),
         answers=data_handler.get_answers(question_id),
         question_id=question_id,
-    )
+        comments=data_handler.get_comments_for_question(question_id)
 
+    )
 
 @app.route("/list/<question_id>/new-answer", methods=["GET", "POST"])
 def new_answer(question_id):
@@ -69,6 +65,12 @@ def vote_question_down(question_id):
 
 @app.route("/list/<question_id>/edit", methods=["GET", "POST"])
 def edit_question(question_id):
+    if request.method == 'POST':
+        if "question_message" in request.form:
+            new_message = request.form["question_message"]
+            new_title = request.form["title"]
+            data_handler.edit_question(question_id, new_message, new_title)
+            return redirect(url_for("display_question", question_id=question_id))
     return render_template(
         "edit.html",
         question=data_handler.get_question(question_id),
@@ -129,17 +131,33 @@ def vote_answer_down(question_id, answer_id):
     return vote_answer(question_id, answer_id, 'down')
 
 
-# @app.route("/list/<question_id>/new-comment", methods=["GET", "POST"])
-# def new_comment(question_id):
-#     if request.method == "POST":
-#         result = {}
-#         result["question_id"] = question_id
-#         result["answer_id"] = answer_id
-#         result["message"] = request.form.get("message")
-#         result["edited_count"] = None
-#         data_handler.add_new_data_to_table(result, 'comment')
-#         return redirect(url_for("display_question", question_id=question_id))
-#     return render_template("new_comment.html", question_id=question_id, answer_id="answer_id")
+@app.route("/list/<question_id>/new-comment", methods=["GET", "POST"])
+def new_comment_a(question_id):
+    if request.method == "POST":
+        result = {}
+        result["question_id"] = question_id
+        result["answer_id"] = None
+        result["message"] = request.form.get("message")
+        result["edited_count"] = 0
+        data_handler.add_new_data_to_table(result, 'comment')
+        return redirect(url_for("display_question", question_id=question_id))
+    return render_template("comment_q.html", question_id=question_id)
+
+
+@app.route("/list/<question_id>/<answer_id>/new-comment", methods=["GET", "POST"])
+def new_comment(question_id, answer_id):
+    if request.method == "POST":
+        result = {}
+        result["question_id"] = None
+        result["answer_id"] = answer_id
+        result["message"] = request.form.get("message")
+        result["edited_count"] = 0
+        data_handler.add_new_data_to_table(result, 'comment')
+        return redirect(url_for("display_question", question_id=question_id))
+    return render_template("new_comment.html", question_id=question_id, answer_id=answer_id)
+
+
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)  # Allow verbose error reports

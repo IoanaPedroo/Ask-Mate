@@ -14,7 +14,7 @@
         <h1>DUNNO LAND</h1>
         <br />
         <h2>
-            Question: {{question['title']}}, {{question['question_message']}}<br />
+            <a href="{{url_for('new_comment_a', question_id=question['id'])}}"> Question: </a> {{question['title']}} {{question['question_message']}}<br />
         </h2>
         <p>Question votes:{{question['vote_number']}}</p>
         <form
@@ -53,9 +53,36 @@
         <br />
         <h3>Answers:</h3>
         <ul>
+            {% for comment in comments%}
+            <li>
+                ID:{{comment["id"]}} {{comment["message"]}} edited_count:{{comment["edited_count"]}}
+            </li>
+            <form
+                action="{{url_for('delete_comment', answer_id=comment['answer_id'], question_id=comment['question_id'])}}"
+                method="POST"
+            >
+                <button type="submit" name="delete_a" class="btn btn-primary">
+                    Delete answer
+                </button>
+            </form>
+            <form
+                action="{{url_for('vote_answer_up', question_id=question_id, answer_id=answer['id'])}}"
+                method="POST"
+            >
+                <button type="submit" name="like">👍</button>
+            </form>
+            <form
+                action="{{url_for('vote_answer_down', question_id=question_id, answer_id=answer['id'])}}"
+                method="POST"
+            >
+                <button type="submit" name="hate">👎</button>
+            </form>
+            {%endfor%}
+        </ul>
+        <ul>
             {% for answer in answers%}
             <li>
-                ID:{{answer["id"]}},{{answer["message"]}} vote
+                <a href="{{ url_for('new_comment', question_id=question_id, answer_id=answer['id']) }}">ID:</a> {{answer["id"]}} {{answer["message"]}} vote
                 number:{{answer["vote_number"]}}
             </li>
             <form

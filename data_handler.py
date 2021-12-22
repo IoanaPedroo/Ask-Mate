@@ -158,3 +158,63 @@ def edit_question(cursor, question_id, edited_title, edited_message):
             """
     cursor.execute(query, {'question_id': question_id, 'edited_title': edited_title, 'edited_message': edited_message})
 
+
+@data_connection.connection_handler
+def get_comments_for_question(cursor, question_id):
+    query = """
+            SELECT * FROM comment
+            WHERE question_id = %(question_id)s;
+            """
+    cursor.execute(query, {'question_id': question_id})
+    return cursor.fetchall()
+
+
+@data_connection.connection_handler
+def get_comments_for_answer(cursor, answer_id):
+    query = """
+            SELECT * FROM comment
+            WHERE answer_id = %(answer_id)s;
+            """
+    cursor.execute(query, {'answer_id': answer_id})
+    return cursor.fetchall()
+
+
+@data_connection.connection_handler
+def delete_comment(cursor, comment_id):
+    query = """
+            DELETE FROM comment
+            WHERE id = %(comment_id)s;
+            """
+    cursor.execute(query, {'comment_id': comment_id})
+
+
+@data_connection.connection_handler
+def edit_comment(cursor, comment_id, message):
+    from datetime import datetime
+    dt = datetime.now().strftime("%Y-%m-%d %H:%M")
+    query = """
+            UPDATE comment
+            SET submission_time = %(submission_time)s, message = %(message)s, edited_count = edited_count + 1
+            WHERE id = %(comment_id)s;
+            """
+    cursor.execute(query, {'comment_id': comment_id, 'message': message, 'submission_time': dt})
+
+
+@data_connection.connection_handler
+def edit_question_answer(cursor, result):
+    query = """
+            UPDATE answer
+            SET message = %(message)s, image = %(image)s
+            WHERE id = %(answer_id)s AND question_id = %(question_id)s;
+            """
+    cursor.execute(query, {'answer_id': result['id'], 'question_id': result['question_id'], 'message': result['message'], 'image': result['image']})
+
+
+@data_connection.connection_handler
+def increase_view_numbers(cursor, question_id):
+    query = """
+            UPDATE question
+            SET view_number = view_number + 1
+            WHERE id = %(question_id)s;
+            """
+    cursor.execute(query, {'question_id': question_id})
