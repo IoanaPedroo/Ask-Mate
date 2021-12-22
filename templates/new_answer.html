@@ -1,6 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
+{% extends "layout.html" %}
+
+{% block content %}
+
         <meta charset="utf-8" />
         <title>NEW ANSWER</title>
         <link
@@ -14,8 +15,8 @@
                 width: 170px;
             }
         </style>
-    </head>
-    <body>
+
+
         <div class="container">
             <form
                 action="{{url_for('new_answer', question_id=question_id)}}"
@@ -39,5 +40,4 @@
             integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
             crossorigin="anonymous"
         ></script>
-    </body>
-</html>
+{% endblock %}

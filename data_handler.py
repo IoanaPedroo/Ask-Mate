@@ -40,6 +40,13 @@ def get_answers(cursor, question_id):
     cursor.execute(query, {'question_id': question_id})
     return cursor.fetchall()
 
+@data_connection.connection_handler
+def get_answer(cursor, answer_id):
+    query = """
+        SELECT * FROM answer where id = %(answer_id)s;
+    """
+    cursor.execute(query, {'answer_id': answer_id})
+    return cursor.fetchone()
 
 @data_connection.connection_handler
 def get_question(cursor, question_id):
@@ -204,7 +211,7 @@ def edit_comment(cursor, comment_id, message):
 def edit_question_answer(cursor, result):
     query = """
             UPDATE answer
-            SET message = %(message)s, image = %(image)s
+            SET message = %(message)s
             WHERE id = %(answer_id)s AND question_id = %(question_id)s;
             """
     cursor.execute(query, {'answer_id': result['id'], 'question_id': result['question_id'], 'message': result['message'], 'image': result['image']})
@@ -218,3 +225,12 @@ def increase_view_numbers(cursor, question_id):
             WHERE id = %(question_id)s;
             """
     cursor.execute(query, {'question_id': question_id})
+
+
+@data_connection.connection_handler
+def get_query(search):
+    query = """
+            SELECT * FROM question
+            WHERE title = %(search)s or message = %(search)s;
+            """
+    cursor.execute(query, {'search': search})

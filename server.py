@@ -14,13 +14,17 @@ app.config["UPLOAD_FOLDER"] = os.path.join(
 @app.route("/list/<question_id>")
 def display_question(question_id):
     data_handler.increase_view_numbers(question_id)
+    answers = data_handler.get_answers(question_id)
+    comm = []
+    for answer in answers:
+        comm.append(data_handler.get_comments_for_answer(answer_id=answer['id']))
     return render_template(
         "question.html",
         question=data_handler.get_question(question_id),
-        answers=data_handler.get_answers(question_id),
+        answers=answers,
         question_id=question_id,
-        comments=data_handler.get_comments_for_question(question_id)
-
+        comments=data_handler.get_comments_for_question(question_id),
+        comments_a=comm
     )
 
 @app.route("/list/<question_id>/new-answer", methods=["GET", "POST"])
@@ -157,7 +161,28 @@ def new_comment(question_id, answer_id):
     return render_template("new_comment.html", question_id=question_id, answer_id=answer_id)
 
 
+@app.route("/list/<question_id>/<answer_id>/edit", methods=["GET", "POST"])
+def edit_answer(question_id, answer_id):
+    if request.method == "POST":
+        edited_answer = {'id': answer_id,
+                      'question_id': question_id,
+                      'message': request.form.get('message'),
+                      'image': None}
+        data_handler.edit_question_answer(edited_answer)
+        return redirect(url_for("display_question", question_id=question_id))
+    return render_template(
+        "edit.html",
+        question=data_handler.get_answer(answer_id),
+        question_id=answer_id,
+    )
 
+@app.route("/search?q=<search_phrase>")
+def search_words(search_phrase):
+    if search_phrase:
+        posts = data_handler.get_query(search_phrase)
+    else:
+        posts = data_handler.get_questions()
+    return render_template("list.html", questions=posts)
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)  # Allow verbose error reports
