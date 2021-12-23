@@ -4,6 +4,12 @@ import os
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
+
+UPLOAD_FOLDER = os.path.join(
+    "static",
+    "images",
+)
+
 app.config["UPLOAD_FOLDER"] = os.path.join(
     os.path.dirname(__file__),
     "static",
@@ -15,9 +21,11 @@ app.config["UPLOAD_FOLDER"] = os.path.join(
 def display_question(question_id):
     data_handler.increase_view_numbers(question_id)
     answers = data_handler.get_answers(question_id)
-    comm = []
-    for answer in answers:
-        comm.append(data_handler.get_comments_for_answer(answer_id=answer["id"]))
+    comm = [
+        data_handler.get_comments_for_answer(answer_id=answer["id"])
+        for answer in answers
+    ]
+
     return render_template(
         "question.html",
         question=data_handler.get_question(question_id),
@@ -31,13 +39,15 @@ def display_question(question_id):
 @app.route("/list/<question_id>/new-answer", methods=["GET", "POST"])
 def new_answer(question_id):
     if request.method == "POST":
-        result = {}
-        result["vote_number"] = 0
-        result["message"] = request.form.get("message")
-        result["question_id"] = question_id
-        result["image"] = None
+        result = {
+            "vote_number": 0,
+            "message": request.form.get("message"),
+            "question_id": question_id,
+            "image": None,
+        }
         data_handler.add_new_data_to_table(result, "answer")
         return redirect(url_for("display_question", question_id=question_id))
+
     return render_template("new_answer.html", question_id=question_id)
 
 
@@ -104,31 +114,41 @@ def list_q():
 @app.route("/add-question", methods=["GET", "POST"])
 def add_q(id=None):
     if request.method == "POST":
-        result = {}
-        result["view_number"] = 0
-        result["vote_number"] = 0
-        result["title"] = request.form.get("title")
-        result["message"] = request.form.get("message")
+        result = {
+            "view_number": 0,
+            "vote_number": 0,
+            "title": request.form.get("title"),
+            "message": request.form.get("message"),
+        }
+
         if request.files:
             image = request.files["images"]
+            result["image"] = ""
             if image.filename != "":
                 path = os.path.join(
                     app.config["UPLOAD_FOLDER"],
                     secure_filename(image.filename),
                 )
                 image.save(path)
-                result["image"] = "../static/images/" + secure_filename(image.filename)
-            else:
-                result["image"] = ""
+                result["image"] = os.path.join(
+                    UPLOAD_FOLDER,
+                    secure_filename(image.filename),
+                )
+
         data_handler.add_new_data_to_table(result, "question")
         return redirect(url_for("list_q"))
+
     return render_template("add-question.html", id=id)
 
 
 def vote_answer(question_id, answer_id, count):
     data_handler.vote_answer(answer_id, count)
     return redirect(
-        url_for("display_question", question_id=question_id, answer_id=answer_id)
+        url_for(
+            "display_question",
+            question_id=question_id,
+            answer_id=answer_id,
+        )
     )
 
 
@@ -145,28 +165,34 @@ def vote_answer_down(question_id, answer_id):
 @app.route("/list/<question_id>/new-comment", methods=["GET", "POST"])
 def new_comment_a(question_id):
     if request.method == "POST":
-        result = {}
-        result["question_id"] = question_id
-        result["answer_id"] = None
-        result["message"] = request.form.get("message")
-        result["edited_count"] = 0
+        result = {
+            "question_id": question_id,
+            "answer_id": None,
+            "message": request.form.get("message"),
+            "edited_count": 0,
+        }
         data_handler.add_new_data_to_table(result, "comment")
         return redirect(url_for("display_question", question_id=question_id))
+
     return render_template("comment_q.html", question_id=question_id)
 
 
 @app.route("/list/<question_id>/<answer_id>/new-comment", methods=["GET", "POST"])
 def new_comment(question_id, answer_id):
     if request.method == "POST":
-        result = {}
-        result["question_id"] = None
-        result["answer_id"] = answer_id
-        result["message"] = request.form.get("message")
-        result["edited_count"] = 0
+        result = {
+            "question_id": None,
+            "answer_id": answer_id,
+            "message": request.form.get("message"),
+            "edited_count": 0,
+        }
         data_handler.add_new_data_to_table(result, "comment")
         return redirect(url_for("display_question", question_id=question_id))
+
     return render_template(
-        "new_comment.html", question_id=question_id, answer_id=answer_id
+        "new_comment.html",
+        question_id=question_id,
+        answer_id=answer_id,
     )
 
 
@@ -174,42 +200,44 @@ def new_comment(question_id, answer_id):
 def edit_answer(question_id, answer_id):
     if request.method == "POST":
         edited_answer = {
-            "id": answer_id,
+            "answer_id": answer_id,
             "question_id": question_id,
             "message": request.form.get("message"),
             "image": None,
         }
         data_handler.edit_question_answer(edited_answer)
         return redirect(url_for("display_question", question_id=question_id))
+
     return render_template(
         "edit_answer.html",
         answer=data_handler.get_answer(answer_id),
         answer_id=answer_id,
-        question_id=question_id
+        question_id=question_id,
     )
 
 
 @app.route("/search", methods=["POST"])
 def search_words():
-    if request.method == 'POST':
+    if request.method == "POST":
         search_phrase = request.form.get("search_phrase")
-        if search_phrase:
-            posts = data_handler.get_query(search_phrase)
-        else:
-            posts = data_handler.get_questions()
+
+        posts = (
+            data_handler.get_query(search_phrase)
+            if search_phrase
+            else data_handler.get_questions()
+        )
+
         return render_template("list.html", questions=posts)
 
 
-@app.route('/list/<question_id>/<comment_id>/edit', methods=["GET", "POST"])
+@app.route("/list/<question_id>/<comment_id>/edit", methods=["GET", "POST"])
 def edit_comment(question_id, comment_id):
-    if request.method == 'POST':
+    if request.method == "POST":
         updated_comment = request.form.get("message")
         data_handler.edit_comment(comment_id, updated_comment)
-        return redirect(url_for("display_question",
-                                question_id=question_id))
-    return redirect(url_for("display_question",
-                            question_id=question_id))
+        return redirect(url_for("display_question", question_id=question_id))
 
+    return redirect(url_for("display_question", question_id=question_id))
 
 
 if __name__ == "__main__":
