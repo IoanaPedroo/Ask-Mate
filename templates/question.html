@@ -1,0 +1,111 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+        <meta charset="utf-8" />
+        <title>Q$A</title>
+        <link
+            rel="stylesheet"
+            href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+            integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+            crossorigin="anonymous"
+        />
+
+        <h1>DUNNO LAND</h1>
+        <br />
+        <h2>
+            <a href="{{url_for('new_comment_a', question_id=question['id'])}}"> Question: </a> {{question['title']}} {{question['question_message']}}<br />
+        </h2>
+        <p>Question votes:{{question['vote_number']}}</p>
+        <form
+            action="{{url_for('delete', question_id=question_id)}}"
+            method="POST"
+        >
+            <button type="submit" name="delete_q" class="btn btn-primary">
+                Delete question
+            </button>
+            <br />
+            <br />
+        </form>
+        <form
+            action="{{url_for('edit_question', question_id=question_id) }}"
+            ,
+            method="POST"
+        >
+            <button type="submit" name="edit" class="btn btn-primary">
+                Edit question
+            </button>
+            <ul>
+                {% for comment in comments%}
+            <li>
+                <a href="{{ url_for('edit_comment', question_id=question_id, comment_id=comment["id"]) }}">ID:</a>{{comment["id"]}} {{comment["message"]}} edited_count:{{comment["edited_count"]}}
+            </li>
+                {% endfor %}
+            </ul>
+        </form>
+        <form
+            action="{{url_for('vote_question_up', question_id=question_id)}}"
+            method="POST"
+        >
+            <button type="submit" name="like">👍</button>
+        </form>
+        <br />
+        <form
+            action="{{url_for('vote_question_down', question_id=question_id)}}"
+            method="POST"
+        >
+            <button type="submit" name="hate">👎</button>
+        </form>
+        <hr />
+        <br />
+        <h3>Answers:</h3>
+        <ul>
+            {% for answer in answers%}
+            <li>
+                <a href="{{ url_for('new_comment', question_id=question_id, answer_id=answer['id']) }}">ID:</a> {{answer["id"]}} {{answer["message"]}} vote
+                number:{{answer["vote_number"]}}
+            <ul>
+                {% for comment in comments_a[answers.index(answer)] %}
+            <li>
+                <a href="{{ url_for('edit_comment', question_id=question_id, comment_id=comment["id"]) }}">ID:</a>{{comment["id"]}} {{comment["message"]}} edited_count:{{comment["edited_count"]}}
+            </li>
+                {% endfor %}
+            </ul>
+            </li>
+            <form
+                action="{{url_for('delete_answer', answer_id=answer['id'], question_id=question_id)}}"
+                method="POST"
+            >
+                <button type="submit" name="delete_a" class="btn btn-primary">
+                    Delete answer
+                </button>
+            </form>
+                <a href="{{url_for('edit_answer', question_id=question_id, answer_id=answer['id'])}}"
+            >Edit answer</a>
+            <form
+                action="{{url_for('vote_answer_up', question_id=question_id, answer_id=answer['id'])}}"
+                method="POST"
+            >
+                <button type="submit" name="like">👍</button>
+            </form>
+            <form
+                action="{{url_for('vote_answer_down', question_id=question_id, answer_id=answer['id'])}}"
+                method="POST"
+            >
+                <button type="submit" name="hate">👎</button>
+            </form>
+            {%endfor%}
+        </ul>
+        <a href="{{ url_for('new_answer', question_id=question_id) }}"
+            >Post a new answer</a
+        >
+        <br />
+
+        <br />
+        <a href="{{ url_for('list_q') }}">Back to questions</a>
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+            crossorigin="anonymous"
+        ></script>
+{% endblock %}

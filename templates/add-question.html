@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+        <meta charset="UTF-8" />
+        <title>Title</title>
+        <link
+            rel="stylesheet"
+            href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+            integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+            crossorigin="anonymous"
+        />
+
+        <div class="container">
+            <h1 class="placeholder text-uppercase mb-4 font-weight-bold col-12 bg-warning mb-0 text-center">ADD A NEW QUESTION</h1>
+            <form
+                method="post"
+                action="{{ url_for('add_q') }}"
+                enctype="multipart/form-data"
+            >
+                <label for="title" class="form-label">Title:</label>
+                <input
+                    type="text"
+                    name="title"
+                    id="title"
+                    class="form-control"
+                    placeholder="Type a name for your question..."
+                    required
+                />
+                <label for="message" class="form-label">Message:</label>
+                <textarea
+                    name="message"
+                    id="message"
+                    class="form-control"
+                    rows="3"
+                    placeholder="Type message..."
+                    required
+                ></textarea>
+                <label for="images" class="form-label">Image:</label>
+                <input
+                    type="file"
+                    name="images"
+                    id="images"
+                    accept="image/*"
+                    class="form-control"
+                />
+                <button class="btn btn-dark" type="submit">
+                    Add new question
+                </button>
+            </form>
+        </div>
+{% endblock %}
