@@ -12,3 +12,4 @@ python-dotenv==0.19.2
 tomli==1.2.3
 typing-extensions==4.0.1
 Werkzeug==2.0.2
+bcrypt~=3.2.0

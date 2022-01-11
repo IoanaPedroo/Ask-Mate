@@ -1,7 +1,9 @@
-from flask import Flask, render_template, request, url_for, redirect
+from flask import Flask, render_template, request, url_for, redirect, session
 import data_handler
 import os
 from werkzeug.utils import secure_filename
+import bcrypt
+
 
 app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = os.path.join(
@@ -9,6 +11,16 @@ app.config["UPLOAD_FOLDER"] = os.path.join(
     "static",
     "images",
 )
+
+
+def hash_password(plain_text_password):
+    hashed_bytes = bcrypt.hashpw(plain_text_password.encode('utf-8'), bcrypt.gensalt())
+    return hashed_bytes.decode('utf-8')
+
+
+def verify_password(plain_text_password, hashed_password):
+    hashed_bytes_password = hashed_password.encode('utf-8')
+    return bcrypt.checkpw(plain_text_password.encode('utf-8'), hashed_bytes_password)
 
 
 @app.route("/list/<question_id>")
@@ -214,5 +226,42 @@ def edit_comment(question_id, comment_id):
     return redirect(url_for("display_question", question_id=question_id))
 
 
+@app.route("/registration", methods=['GET', 'POST'])
+def register_user():
+    if request.method == 'POST':
+        result = {
+            "email": request.form.get('email'),
+            "password":  hash_password(request.form.get('password')),
+        }
+        data_handler.add_user(result)
+        return redirect(url_for('main_page'))
+    return render_template('registered.html')
+
+
+@app.route("/login", methods=['GET', 'POST'])
+def login_user():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        user = data_handler.checkout_data(email)
+        if verify_password(password, user['password']):
+            session.update({'email': user.get('email')})
+            return redirect(url_for('main_page'))
+        return 'Invalid login attempt'
+    return render_template('login_form.html')
+
+
+@app.route('/logout')
+def logout():
+    session.pop('email', None)
+    return redirect(url_for('main_page'))
+
+@app.route('/users')
+def list_users():
+    users = data_handler.select_users
+    return render_template('list_users.html', users=users)
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
+
+

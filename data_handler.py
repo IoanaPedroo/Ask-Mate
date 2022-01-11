@@ -270,3 +270,40 @@ def get_query(cursor, search):
             """
     cursor.execute(query, {"search": "%" + search + "%"})
     return cursor.fetchall()
+
+
+@data_connection.connection_handler
+def add_user(cursor, result):
+    cursor.execute(
+        """
+            INSERT INTO  (email, password)
+            VALUES (%(email)s, %(password)s);
+        """,
+        {
+            "email": result["email"],
+            "password": result["password"],
+        },
+    )
+
+@data_connection.connection_handler
+def checkout_data(cursor, email):
+    cursor.execute(
+        """
+        SELECT * FROM  WHERE email = %(email)s
+        """,
+        {
+            "email": email,
+        },
+    )
+    return cursor.fetchone()
+
+
+@data_connection.connection_handler
+def select_users(cursor):
+    cursor.execute(
+        """
+            SELECT * FROM 
+            WHERE == True;
+        """
+    )
+    return cursor.fetchall()
