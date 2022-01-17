@@ -1,18 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>LOGIN</title>
-    <link
-        rel="stylesheet"
-        href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-        crossorigin="anonymous"
-    />
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}"/>
-</head>
-<body class="body">
+{% extends "layout.html" %}
+{% block style %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}"/>
+{% endblock %}
+{% block content %}
+
     <section class="Form my-5 py-5">
         <div class="container">
             <div class="row no-gutters">
@@ -25,7 +16,7 @@
                 <div class="col-lg-7 py-5 pt-5">
                     <h1 class="font-weight-bold py-3">LOGIN FORM</h1>
                     <h4>Sign into your account</h4>
-                    <form method="post" action= "{{ url_for('login_form') }}">
+                    <form method="post" action= "{{ url_for('login_user') }}">
                         <div class="form-group">
                             <div class="col-lg-7">
                                 <label for="email">Email</label>
@@ -50,17 +41,10 @@
                             </div>
                         </div>
 {#                        <a href="#">Forgot password</a>#}
-                        <p>Don't have an account ?<a href="{{ url_for('register') }}">Register here</a></p>
+                        <p>Don't have an account ?<a href="{{ url_for('register_user') }}">Register here</a></p>
                     </form>
                 </div>
             </div>
         </div>
     </section>
-
-    <script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-        crossorigin="anonymous"
-    ></script>
-</body>
-</html>
+{% endblock %}

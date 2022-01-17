@@ -70,8 +70,8 @@ def add_new_data_to_table(cursor, result, content):
     if content == "question":
         cursor.execute(
             """
-                INSERT INTO question (submission_time, view_number, vote_number, title, message, image)
-                VALUES (%(submission_time)s, %(view_number)s, %(vote_number)s, %(title)s, %(message)s, %(image)s);
+                INSERT INTO question (submission_time, view_number, vote_number, title, message, image, user_id)
+                VALUES (%(submission_time)s, %(view_number)s, %(vote_number)s, %(title)s, %(message)s, %(image)s, %(user_id)s);
             """,
             {
                 "submission_time": date,
@@ -80,14 +80,15 @@ def add_new_data_to_table(cursor, result, content):
                 "title": result["title"],
                 "message": result["message"],
                 "image": result["image"],
+                "user_id": result['user_id']
             },
         )
 
     elif content == "answer":
         cursor.execute(
             """
-                INSERT INTO answer (submission_time, vote_number, question_id, message, image)
-                VALUES (%(submission_time)s, %(vote_number)s, %(question_id)s, %(message)s, %(image)s);
+                INSERT INTO answer (submission_time, vote_number, question_id, message, image, user_id, acceptance)
+                VALUES (%(submission_time)s, %(vote_number)s, %(question_id)s, %(message)s, %(image)s, %(user_id)s, %(acceptance_answers)s);
             """,
             {
                 "submission_time": date,
@@ -95,14 +96,16 @@ def add_new_data_to_table(cursor, result, content):
                 "question_id": result["question_id"],
                 "message": result["message"],
                 "image": result["image"],
+                "user_id": result['user_id'],
+                "acceptance_answers": False
             },
         )
 
     elif content == "comment":
         cursor.execute(
             """
-                INSERT INTO comment (question_id, answer_id, message, submission_time, edited_count)
-                VALUES (%(question_id)s, %(answer_id)s, %(message)s, %(submission_time)s, %(edited_count)s);
+                INSERT INTO comment (question_id, answer_id, message, submission_time, edited_count, user_id)
+                VALUES (%(question_id)s, %(answer_id)s, %(message)s, %(submission_time)s, %(edited_count)s, %(user_id)s);
             """,
             {
                 "question_id": result["question_id"],
@@ -110,6 +113,7 @@ def add_new_data_to_table(cursor, result, content):
                 "message": result["message"],
                 "submission_time": date,
                 "edited_count": result["edited_count"],
+                "user_id": result['user_id']
             },
         )
 
@@ -274,3 +278,166 @@ def get_query(cursor, search):
         {"search": "%" + search + "%"},
     )
     return cursor.fetchall()
+
+
+@data_connection.connection_handler
+def checkout_data(cursor, email):
+    cursor.execute(
+        """
+        SELECT id, username as email, password, registration FROM users WHERE username = %(username)s
+        """,
+        {
+            "username": email,
+        },
+    )
+    return cursor.fetchone()
+
+
+@data_connection.connection_handler
+def add_user(cursor, result):
+    date = datetime.now().strftime("%Y-%m-%d %H:%M")
+    cursor.execute(
+        """
+            INSERT INTO users (username, password, registration, reputation)
+            VALUES (%(username)s, %(password)s, %(registration)s, %(reputation)s);
+        """,
+        {
+            "username": result["email"],
+            "password": result["password"],
+            "registration": date,
+            "reputation": 0
+
+        },
+    )
+
+
+@data_connection.connection_handler
+def select_users(cursor):
+    cursor.execute(
+        """
+            SELECT * FROM users;
+        """
+    )
+    return cursor.fetchall()
+
+
+@data_connection.connection_handler
+def count_q_by_user(cursor, user_id):
+    cursor.execute(
+        """
+        SELECT COUNT(user_id) AS questions FROM question WHERE user_id =%(user_id)s;
+        """,
+        {
+            "user_id": user_id
+        }
+    )
+    return cursor.fetchone()
+
+
+
+@data_connection.connection_handler
+def count_a_by_user(cursor, user_id):
+    cursor.execute(
+        """
+        SELECT COUNT(user_id) AS answers FROM answer WHERE user_id =%(user_id)s;
+        """,
+        {
+            "user_id": user_id
+        }
+    )
+    return cursor.fetchone()
+
+
+
+@data_connection.connection_handler
+def count_c_by_user(cursor, user_id):
+    cursor.execute(
+        """
+        SELECT COUNT(user_id) AS comments FROM comment WHERE user_id =%(user_id)s;
+        """,
+        {
+            "user_id": user_id
+        }
+    )
+    return cursor.fetchone()
+
+
+
+@data_connection.connection_handler
+def get_q_by_user(cursor, user_id):
+    cursor.execute(
+        """
+        SELECT * FROM question WHERE user_id=%(user_id)s;
+        """,
+        {
+            "user_id": user_id
+        }
+    )
+    return cursor.fetchall()
+
+
+@data_connection.connection_handler
+def get_a_by_user(cursor, user_id):
+    cursor.execute(
+        """
+        SELECT * FROM answer WHERE user_id=%(user_id)s;
+        """,
+        {
+            "user_id": user_id
+        }
+    )
+    return cursor.fetchall()
+
+
+@data_connection.connection_handler
+def get_c_by_user(cursor, user_id):
+    cursor.execute(
+        """
+        SELECT * FROM comment WHERE user_id=%(user_id)s;
+        """,
+        {
+            "user_id": user_id
+        }
+    )
+    return cursor.fetchall()
+
+
+@data_connection.connection_handler
+def accept_answer(cursor, user_id):
+    cursor.execute(
+        """
+        UPDATE answer
+        SET acceptance = (CASE WHEN acceptance=FALSE THEN TRUE ELSE FALSE END)
+        WHERE user_id = %(user_id)s;
+        """,
+        {
+            "user_id": user_id
+        }
+    )
+
+
+@data_connection.connection_handler
+def change_reputation(cursor, user_id, value):
+    cursor.execute(
+        """
+        UPDATE answer
+        SET  vote_number = vote_number + %(value)s
+        WHERE user_id=%(user_id)s
+        """,
+        {
+            "user_id": user_id,
+            "value": value
+        }
+    )
+
+@data_connection.connection_handler
+def select_user(cursor, user_id):
+    cursor.execute(
+        """
+        SELECT * FROM users WHERE id=%(user_id)s;
+        """,
+        {
+            "user_id": user_id
+        }
+    )
+    return cursor.fetchone()

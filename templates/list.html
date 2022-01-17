@@ -27,7 +27,7 @@
 {% endblock style %} {% block content %}
 
 <h5 class="h4 category rounded-top text-dark">
-    <a href="{{ url_for('list_q') }}">ASK MATE1</a>
+    <a href="{{ url_for('list_q') }}">ASK MATE3</a>
 </h5>
 
 <h2><a href="{{ url_for('add_q') }}">Add Question</a></h2>
@@ -36,7 +36,7 @@
     <thead class="col-12 bg-warning">
         <tr>
             {% if questions | length > 0 %} {% for dictionary in
-            questions[0].keys() %}
+            questions[0].keys() %}{% if dictionary != 'user_id' %}
             <th scope="col" class="forum-col align-middle">
                 <small class="d-flex justify-content-around w-100 text-center">
                     <a
@@ -52,6 +52,7 @@
                     >
                 </small>
             </th>
+                {% endif %}
             {% endfor %} {% else %}
             <p>No results found</p>
             {% endif %}

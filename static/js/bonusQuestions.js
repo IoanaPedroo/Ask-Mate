@@ -1,52 +1,125 @@
-// you receive an array of objects which you must sort in the by the key "sortField" in the "sortDirection"
 function getSortedItems(items, sortField, sortDirection) {
-    console.log(items)
-    console.log(sortField)
-    console.log(sortDirection)
-
-    // === SAMPLE CODE ===
-    // if you have not changed the original html uncomment the code below to have an idea of the
-    // effect this function has on the table
-    //
-    if (sortDirection === "asc") {
-        const firstItem = items.shift()
-        if (firstItem) {
-            items.push(firstItem)
-        }
-    } else {
-        const lastItem = items.pop()
-        if (lastItem) {
-            items.push(lastItem)
-        }
+    if (sortDirection === "asc" && sortField === 'Title') {
+        items.sort(function(a, b) {
+      const nameA = a['Title'];
+      const nameB = b['Title'];
+      if (nameA < nameB) {
+        return -1;
+      }
+      if (nameA > nameB) {
+        return 1;
+      }
+      return 0;
+    });
     }
-
+    if(sortDirection === "asc" && sortField === 'Description'){
+        items.sort(function(a, b) {
+      const nameA = a['Description'];
+      const nameB = b['Description'];
+      if (nameA < nameB) {
+        return -1;
+      }
+      if (nameA > nameB) {
+        return 1;
+      }
+      return 0;
+    });
+    }
+    if(sortDirection === "desc" && sortField === 'Title'){
+        items.sort(function(a, b) {
+      const nameA = a['Title'];
+      const nameB = b['Title'];
+      if (nameB < nameA) {
+        return -1;
+      }
+      if (nameB > nameA) {
+        return 1;
+      }
+      return 0;
+    });
+    }
+    if(sortDirection === "desc" && sortField === 'Description'){
+       items.sort(function(a, b) {
+      const nameA = a['Description'];
+      const nameB = b['Description'];
+      if (nameB < nameA) {
+        return -1;
+      }
+      if (nameB > nameA) {
+        return 1;
+      }
+      return 0;
+    });
+    }
+    else if(sortDirection === "asc" && sortField === 'ViewNumber'){
+        items.sort(function(a, b){return a['ViewNumber'] - b['ViewNumber']})
+    }
+    else if(sortDirection === "asc" && sortField === 'VoteCount'){
+        items.sort(function(a, b){return a['VoteCount'] - b['VoteCount']})
+    }
+    else if(sortDirection === "desc" && sortField === 'ViewNumber'){
+        items.sort(function(a, b){return b['ViewNumber'] - a['ViewNumber']})
+    }
+    else if(sortDirection === "desc" && sortField === 'VoteCount'){
+        items.sort(function(a, b){return b['VoteCount'] - a['VoteCount']})
+    }
     return items
 }
 
-// you receive an array of objects which you must filter by all it's keys to have a value matching "filterValue"
 function getFilteredItems(items, filterValue) {
-    console.log(items)
-    console.log(filterValue)
-
-    // === SAMPLE CODE ===
-    // if you have not changed the original html uncomment the code below to have an idea of the
-    // effect this function has on the table
-    //
-    for (let i=0; i<filterValue.length; i++) {
-        items.pop()
+    const specialChar = '!'
+    const results = []
+    if(filterValue.substring(0, "!Description:".length) === '!Description:'){
+        return items.filter(it => !it['Description'].includes(filterValue.substring("!Description:".length)))
     }
-
-    return items
+    if(filterValue.substring(0, "Description:".length) === 'Description:'){
+        return items.filter(it => it['Description'].includes(filterValue.substring("Description:".length)))
+    }
+    if(filterValue[0] === specialChar){
+         return items.filter(it => !it['Title'].includes(filterValue.substring(1)));
+    }
+    for (let i=0; i<items.length; i++) {
+        if(items[i]['Title'].includes(filterValue) || items[i]['Description'].includes(filterValue)){
+            results.push(items[i])
+    }
+    }
+    return results;
 }
 
 function toggleTheme() {
-    console.log("toggle theme")
+        let container = document.getElementById('font');
+        let color = 'black';
+        if(container.style.background !== color){
+            container.style.background = color
+            container.style.color = 'white'
+        }else{
+            container.style.background = 'white'
+            container.style.color = color
+        }
+        console.log("toggle theme")
 }
 
 function increaseFont() {
+    let max = 15
+    let el = document.getElementById('font');
+    let fontSize = window.getComputedStyle(el, null).getPropertyValue("font-size")
+    fontSize = parseFloat(fontSize);
+    console.log(fontSize)
+    if (fontSize < max){
+        console.log(fontSize)
+        el.style.fontSize = (fontSize + 2) + 'px';
+    }
     console.log("increaseFont")
 }
 
+
 function decreaseFont() {
+    let min = 3
+    let element = document.getElementById('font');
+    let fontSize = window.getComputedStyle(element, null).getPropertyValue("font-size")
+    fontSize = parseFloat(fontSize);
+    if (fontSize > min){
+        element.style.fontSize = (fontSize - 2) + 'px';
+    }
     console.log("decreaseFont")
 }

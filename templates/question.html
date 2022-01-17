@@ -55,9 +55,14 @@
         <a
             href="{{ url_for('new_comment', question_id=question_id, answer_id=answer['id']) }}"
             >ID:</a
-        >
+        >{% if question.user_id == user_id  and answer['acceptance']%}
         {{answer["id"]}} {{answer["message"]}} vote
         number:{{answer["vote_number"]}}
+        {% elif question.user_id == user_id  and not answer['acceptance']%}
+        <p>{{answer["id"]}}</p>
+        <strong>{{answer["message"]}}</strong>
+        <p>vote number:{{answer["vote_number"]}}</p>
+        {% endif %}
         <ul>
             {% for comment in comments_a[answers.index(answer)] %}
             <li>
@@ -94,6 +99,23 @@
     >
         <button type="submit" name="hate">👎</button>
     </form>
+        {% if question.user_id == user_id  and not answer['acceptance']%}
+            <form
+            action="{{url_for('acceptance_answers', user_id=answer['user_id'])}}"
+            method="POST"
+            >
+            <input type="hidden" name="question_id" value="{{ question_id }}">
+            <button type="submit" name="acceptance">Validate answer</button>
+            </form>
+            {% elif question.user_id == user_id  and answer['acceptance']%}
+                <form
+                    action="{{url_for('acceptance_answers', user_id=answer['user_id'])}}"
+                method="POST"
+                >
+                <input type="hidden" name="question_id" value="{{ question_id }}">
+                <button type="submit" name="acceptance">Unvalidate</button>
+                </form>
+        {% endif %}
     {%endfor%}
 </ul>
 <p>

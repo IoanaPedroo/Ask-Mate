@@ -1,0 +1,24 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+.body {
+    background: lightslategrey;
+}
+.row {
+    background: white;
+    border-radius: 30px;
+    box-shadow: 12px 12px 22px;
+}
+img {
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+}
+button {
+    height: 50px;
+    width: 100%;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
