@@ -1,13 +1,13 @@
 {% extends "layout.html" %} {% block content %}
 
 <form
-    action="{{url_for('new_comment_a', question_id=question_id)}}"
+    action="{{url_for('new_comment_question', question_id=question_id)}}"
     method="post"
 >
-    <label for="message" class="form-label">ADD A NEW COMMENT</label>
+    <label for="editcomment" class="form-label">ADD A NEW COMMENT</label>
     <textarea
-        id="message"
-        name="message"
+        id="editcomment"
+        name="editcomment"
         class="form-control"
         aria-label="With textarea"
         placeholder="Type here..."

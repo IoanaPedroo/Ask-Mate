@@ -2,7 +2,7 @@
 
 <h1>DUNNO LAND</h1>
 <h2>
-    <a href="{{url_for('new_comment_a', question_id=question['id'])}}">
+    <a href="{{url_for('new_comment_question', question_id=question['id'], answer_id=answer_id)}}">
         Question:
     </a>
     {{question['title']}} {{question['question_message']}}
@@ -22,11 +22,12 @@
     <button type="submit" name="edit" class="btn btn-primary">
         Edit question
     </button>
+    
     <ul>
         {% for comment in comments%}
         <li>
             <a
-                href="{{ url_for('edit_comment', question_id=question_id, comment_id=comment['id']) }}"
+                href="{{ url_for('edit_comment',question_id=question_id, comment_id=comment['id']) }}"
                 >ID:</a
             >{{comment["id"]}} {{comment["message"]}}
             edited_count:{{comment["edited_count"]}}
@@ -51,30 +52,33 @@
 <h3 class="mt-3">Answers:</h3>
 <ul>
     {% for answer in answers%}
+    
     <li>
         <a
-            href="{{ url_for('new_comment', question_id=question_id, answer_id=answer['id']) }}"
+            href="{{ url_for('new_comment', question_id=question_id, answer_id=answer_id) }}"
             >ID:</a
-        >{% if question.user_id == user_id  and answer['acceptance']%}
-        {{answer["id"]}} {{answer["message"]}} vote
+        >{% if answer['acceptance']%}
+        {{answer["id"]}} {{answer['message']}} vote
         number:{{answer["vote_number"]}}
-        {% elif question.user_id == user_id  and not answer['acceptance']%}
+        {% elif not answer['acceptance']%}
         <p>{{answer["id"]}}</p>
-        <strong>{{answer["message"]}}</strong>
+        <strong>{{answer['message']}}</strong>
         <p>vote number:{{answer["vote_number"]}}</p>
         {% endif %}
+        
         <ul>
             {% for comment in comments_a[answers.index(answer)] %}
             <li>
                 <a
-                    href="{{ url_for('edit_comment', question_id=question_id, comment_id=comment['id']) }}"
+                    href="{{ url_for('edit_comment',question_id=question_id, comment_id=comment['id']) }}"
                     >ID:</a
                 >{{comment["id"]}} {{comment["message"]}}
                 edited_count:{{comment["edited_count"]}}
             </li>
-            {% endfor %}
+            
         </ul>
     </li>
+    {% endfor %}
     <form
         action="{{url_for('delete_answer', answer_id=answer['id'], question_id=question_id)}}"
         method="POST"
@@ -107,7 +111,7 @@
             <input type="hidden" name="question_id" value="{{ question_id }}">
             <button type="submit" name="acceptance">Validate answer</button>
             </form>
-            {% elif question.user_id == user_id  and answer['acceptance']%}
+            {% elif question['user_id'] == user_id  and answer['acceptance']%}
                 <form
                     action="{{url_for('acceptance_answers', user_id=answer['user_id'])}}"
                 method="POST"

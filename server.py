@@ -56,13 +56,15 @@ def verify_password(plain_text_password, hashed_password):
 
 @app.route("/list/<question_id>")
 def display_question(question_id):
-    data_handler.increase_view_numbers(question_id)
-    answers = data_handler.get_answers(question_id)
-    comm = [
-        data_handler.get_comments_for_answer(answer_id=answer["id"])
-        for answer in answers
-    ]
-    return render_template(
+    if 'id' in session:
+        data_handler.increase_view_numbers(question_id)
+        answers = data_handler.get_answers(question_id)
+        comm = [
+            data_handler.get_comments_for_answer(answer_id=answer["id"])
+            for answer in answers
+        ]
+        
+        return render_template(
         "question.html",
         question=data_handler.get_question(question_id),
         answers=answers,
@@ -71,6 +73,9 @@ def display_question(question_id):
         comments_a=comm,
         user_id=session['id']
     )
+    return redirect(
+            url_for('login_user')
+        )
 
 
 @app.route("/bonus-questions", methods=["GET", "POST"])
@@ -153,7 +158,7 @@ def list_q():
         else "ASC"
     )
     questions = data_handler.sort_q(order_by, order_direction)
-    return render_template("list.html", questions=questions,user_id=session['id'])
+    return render_template("list.html", questions=questions)
 
 
 @app.route("/add-question", methods=["GET", "POST"])
@@ -202,33 +207,37 @@ def vote_answer_down(question_id, answer_id):
 
 
 @app.route("/list/<question_id>/new-comment", methods=["GET", "POST"])
-def new_comment_a(question_id):
-    if request.method == "POST" and 'email' in session:
-        result = {
+def new_comment_question(question_id):
+    if request.method == "POST":
+        if "editcomment" in request.form:
+            result = {
             "question_id": question_id,
             "answer_id": None,
-            "message": request.form.get("message"),
+            "message": request.form.get("editcomment"),
             "edited_count": 0,
             "user_id": session['id']
         }
-        data_handler.add_new_data_to_table(result, "comment")
-        return redirect(url_for("display_question", question_id=question_id,user_id=session['id']))
-
+            data_handler.add_new_data_to_table(result, "comment")
+            return redirect(url_for("display_question", question_id=question_id))
     return render_template("comment_q.html", question_id=question_id,user_id=session['id'])
+    
+
+   
 
 
 @app.route("/list/<question_id>/<answer_id>/new-comment", methods=["GET", "POST"])
 def new_comment(question_id, answer_id):
-    if request.method == "POST" and 'email' in session:
-        result = {
+    if request.method == "POST":
+        if 'newcomment' in request.form:
+            result = {
             "question_id": None,
             "answer_id": answer_id,
-            "message": request.form.get("message"),
+            "message": request.form.get("newcomment"),
             "edited_count": 0,
             "user_id": session['id']
         }
-        data_handler.add_new_data_to_table(result, "comment")
-        return redirect(url_for("display_question", question_id=question_id))
+            data_handler.add_new_data_to_table(result, "comment")
+            return redirect(url_for("display_question", question_id=question_id, answer_id=answer_id))
 
     return render_template(
         "new_comment.html",
@@ -273,13 +282,20 @@ def search_words():
         return render_template("list.html", questions=posts,user_id=session['id'])
 
 
-@app.route("/list/<question_id>/<comment_id>/edit", methods=["GET", "POST"])
+@app.route("/list/<question_id>/comment/<comment_id>/edit", methods=['GET', 'POST'])
 def edit_comment(question_id, comment_id):
-    if request.method == "POST" and 'email' in session:
-        updated_comment = request.form.get("message")
-        data_handler.edit_comment(comment_id, updated_comment)
-        return redirect(url_for("display_question", question_id=question_id,user_id=session['id']))
-    return redirect(url_for("display_question", question_id=question_id))
+    comment=data_handler.get_one_comment( comment_id)
+    if request.method == "POST":   
+        print(comment)
+        edited_comment = request.form.get('editcomment')
+        print(edited_comment)
+        data_handler.edit_comments(comment,edited_comment)
+        return redirect(url_for("display_question",question_id=question_id, user_id=session['id']))
+    return render_template('edit_comment.html', comment_id=comment_id , comment=comment, question_id=question_id)
+
+
+
+
 
 
 @app.route("/registration", methods=['GET', 'POST'])
@@ -300,6 +316,7 @@ def login_user():
         email = request.form.get('email')
         password = request.form.get('password')
         user = data_handler.checkout_data(email)
+        print(user)
         if verify_password(password, user['password']):
             session.update({'email': user.get('email'), 'id': user.get('id')})
             return redirect(url_for('main_page'))

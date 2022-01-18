@@ -218,16 +218,9 @@ def get_comments_for_answer(cursor, answer_id):
     return cursor.fetchall()
 
 
-@data_connection.connection_handler
-def delete_comment(cursor, comment_id):
-    cursor.execute(
-        "DELETE FROM comment WHERE id = %(comment_id)s;",
-        {"comment_id": comment_id},
-    )
-
 
 @data_connection.connection_handler
-def edit_comment(cursor, comment_id, message):
+def edit_comments(cursor, comment, edited_comment):
     dt = datetime.now().strftime("%Y-%m-%d %H:%M")
 
     cursor.execute(
@@ -237,7 +230,7 @@ def edit_comment(cursor, comment_id, message):
             WHERE id = %(comment_id)s;
         """,
         {
-            "comment_id": comment_id,
+            "comment_id": comment['id'],
             "message": message,
             "submission_time": dt,
         },
@@ -253,6 +246,19 @@ def edit_question_answer(cursor, result):
             WHERE id = %(answer_id)s AND question_id = %(question_id)s;
         """,
         result,
+    )
+
+@data_connection.connection_handler
+def edit_comments(cursor ,result):
+    print(result)
+    cursor.execute(
+        """
+            UPDATE comment
+            SET message =  %(message)s,
+            WHERE id = %(id)s ;
+        """,
+        {'message':result['message'],
+        'id':result['id']}
     )
 
 
@@ -284,7 +290,7 @@ def get_query(cursor, search):
 def checkout_data(cursor, email):
     cursor.execute(
         """
-        SELECT id, username as email, password, registration FROM users WHERE username = %(username)s
+        SELECT id, username as email, password, registration FROM users WHERE username = %(username)s;
         """,
         {
             "username": email,
@@ -440,4 +446,10 @@ def select_user(cursor, user_id):
             "user_id": user_id
         }
     )
+    return cursor.fetchone()
+
+@data_connection.connection_handler
+def get_one_comment(cursor, comment_id):
+    cursor.execute("""
+    SELECT * FROM comment WHERE id=%(comment_id)s;""", {'comment_id': comment_id})
     return cursor.fetchone()
