@@ -80,7 +80,7 @@ def add_new_data_to_table(cursor, result, content):
                 "title": result["title"],
                 "message": result["message"],
                 "image": result["image"],
-                "user_id": result['user_id']
+                "user_id": result["user_id"],
             },
         )
 
@@ -96,8 +96,8 @@ def add_new_data_to_table(cursor, result, content):
                 "question_id": result["question_id"],
                 "message": result["message"],
                 "image": result["image"],
-                "user_id": result['user_id'],
-                "acceptance_answers": False
+                "user_id": result["user_id"],
+                "acceptance_answers": False,
             },
         )
 
@@ -113,7 +113,7 @@ def add_new_data_to_table(cursor, result, content):
                 "message": result["message"],
                 "submission_time": date,
                 "edited_count": result["edited_count"],
-                "user_id": result['user_id']
+                "user_id": result["user_id"],
             },
         )
 
@@ -224,7 +224,6 @@ def get_comments_for_answer(cursor, answer_id):
     return cursor.fetchall()
 
 
-
 @data_connection.connection_handler
 def edit_comments(cursor, comment, edited_comment):
     dt = datetime.now().strftime("%Y-%m-%d %H:%M")
@@ -307,8 +306,7 @@ def add_user(cursor, result):
             "username": result["email"],
             "password": result["password"],
             "registration": date,
-            "reputation": 0
-
+            "reputation": 0,
         },
     )
 
@@ -329,12 +327,9 @@ def count_q_by_user(cursor, user_id):
         """
         SELECT COUNT(user_id) AS questions FROM question WHERE user_id =%(user_id)s;
         """,
-        {
-            "user_id": user_id
-        }
+        {"user_id": user_id},
     )
     return cursor.fetchone()
-
 
 
 @data_connection.connection_handler
@@ -343,12 +338,9 @@ def count_a_by_user(cursor, user_id):
         """
         SELECT COUNT(user_id) AS answers FROM answer WHERE user_id =%(user_id)s;
         """,
-        {
-            "user_id": user_id
-        }
+        {"user_id": user_id},
     )
     return cursor.fetchone()
-
 
 
 @data_connection.connection_handler
@@ -357,12 +349,9 @@ def count_c_by_user(cursor, user_id):
         """
         SELECT COUNT(user_id) AS comments FROM comment WHERE user_id =%(user_id)s;
         """,
-        {
-            "user_id": user_id
-        }
+        {"user_id": user_id},
     )
     return cursor.fetchone()
-
 
 
 @data_connection.connection_handler
@@ -371,9 +360,7 @@ def get_q_by_user(cursor, user_id):
         """
         SELECT * FROM question WHERE user_id=%(user_id)s;
         """,
-        {
-            "user_id": user_id
-        }
+        {"user_id": user_id},
     )
     return cursor.fetchall()
 
@@ -384,9 +371,7 @@ def get_a_by_user(cursor, user_id):
         """
         SELECT * FROM answer WHERE user_id=%(user_id)s;
         """,
-        {
-            "user_id": user_id
-        }
+        {"user_id": user_id},
     )
     return cursor.fetchall()
 
@@ -397,9 +382,7 @@ def get_c_by_user(cursor, user_id):
         """
         SELECT * FROM comment WHERE user_id=%(user_id)s;
         """,
-        {
-            "user_id": user_id
-        }
+        {"user_id": user_id},
     )
     return cursor.fetchall()
 
@@ -412,9 +395,7 @@ def accept_answer(cursor, user_id):
         SET acceptance = (CASE WHEN acceptance=FALSE THEN TRUE ELSE FALSE END)
         WHERE user_id = %(user_id)s;
         """,
-        {
-            "user_id": user_id
-        }
+        {"user_id": user_id},
     )
 
 
@@ -426,11 +407,9 @@ def change_reputation(cursor, user_id, value):
         SET  vote_number = vote_number + %(value)s
         WHERE user_id=%(user_id)s
         """,
-        {
-            "user_id": user_id,
-            "value": value
-        }
+        {"user_id": user_id, "value": value},
     )
+
 
 @data_connection.connection_handler
 def select_user(cursor, user_id):
@@ -438,14 +417,16 @@ def select_user(cursor, user_id):
         """
         SELECT * FROM users WHERE id=%(user_id)s;
         """,
-        {
-            "user_id": user_id
-        }
+        {"user_id": user_id},
     )
     return cursor.fetchone()
 
+
 @data_connection.connection_handler
 def get_one_comment(cursor, comment_id):
-    cursor.execute("""
-    SELECT * FROM comment WHERE id=%(comment_id)s;""", {'comment_id': comment_id})
+    cursor.execute(
+        """
+    SELECT * FROM comment WHERE id=%(comment_id)s;""",
+        {"comment_id": comment_id},
+    )
     return cursor.fetchone()
