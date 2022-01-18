@@ -454,3 +454,27 @@ def get_user_2(cursor, answer_id):
                        "answer_id": answer_id
                    })
     return cursor.fetchone()
+
+@data_connection.connection_handler
+def get_tags(cursor):
+    cursor.execute("""
+    SELECT name, COUNT(question.id) FROM tag
+    inner join question_tag on tag.id = question_tag.tag_id
+    inner join question on question.id = question_tag.question_id
+    group by name;
+    """)
+    return cursor.fetchall()
+
+@data_connection.connection_handler
+def get_question_tags(cursor, question_id):
+    cursor.execute("""
+    SELECT name FROM tag
+    LEFT OUTER JOIN question_tag ON tag.id = question_tag.tag_id
+    LEFT OUTER JOIN question on question.id = question_tag.question_id
+    WHERE question_tag.question_id = %(question_id)s
+    """,
+       {"question_id": question_id},
+       )
+    return cursor.fetchall()
+
+

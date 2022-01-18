@@ -4,7 +4,6 @@ import os
 from werkzeug.utils import secure_filename
 import bcrypt
 from bonus_questions import SAMPLE_QUESTIONS
-import re
 
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
@@ -44,7 +43,7 @@ def display_question(question_id):
             data_handler.get_comments_for_answer(answer_id=answer["id"])
             for answer in answers
         ]
-
+        tags = data_handler.get_question_tags(question_id)
         return render_template(
             "question.html",
             question=data_handler.get_question(question_id),
@@ -53,6 +52,7 @@ def display_question(question_id):
             comments=data_handler.get_comments_for_question(question_id),
             comments_a=comm,
             user_id=session["id"],
+            tags=tags,
         )
     return redirect(url_for("login_user"))
 
@@ -368,6 +368,11 @@ def user_page(user_id):
         )
     return redirect(url_for("main_page"))
 
+
+@app.route("/tag")
+def list_tags():
+    tags = data_handler.get_tags()
+    return render_template("tags.html", tags=tags)
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
