@@ -121,7 +121,7 @@
     </form>
         {% if question.user_id == user_id  and not answer['acceptance']%}
             <form
-            action="{{url_for('acceptance_answers', user_id=answer['user_id'])}}"
+            action="{{url_for('acceptance_answers', answer_id =answer['id'], user_id=answer['user_id'])}}"
             method="POST"
             >
             <input type="hidden" name="question_id" value="{{ question_id }}">
@@ -129,7 +129,7 @@
             </form>
             {% elif question['user_id'] == user_id  and answer['acceptance']%}
                 <form
-                    action="{{url_for('acceptance_answers', user_id=answer['user_id'])}}"
+                    action="{{url_for('acceptance_answers', answer_id =answer['id'], user_id=answer['user_id'])}}"
                 method="POST"
                 >
                 <input type="hidden" name="question_id" value="{{ question_id }}">
