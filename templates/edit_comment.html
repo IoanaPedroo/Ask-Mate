@@ -15,20 +15,20 @@
     Edit comment
 </h1>
 <form
-    action='{{url_for("edit_comment", question_id=question_id, comment_id=comment['id'])}}'
-    method="post"
+    action='{{url_for("edit_comment", comment_id=comment_id , question_id=question_id)}}'
+    method="POST"
 >
-    <label class="form-label" for="message">Edit comment</label>
+    <label class="form-label" for="editcomment">Edit comment message</label>
     <textarea
-        id="message"
+        id="editcomment"
         class="form-control"
-        name="message"
+        name="editcomment"
         rows="3"
         required
     >
 {{comment['message']}}</textarea
     >
-    <button class="btn btn-primary mt-3" type="submit">Submit comment</button>
+    <button class="mt-3 btn btn-dark" type="submit">Submit commit</button>
 </form>
 
 {% endblock %}
