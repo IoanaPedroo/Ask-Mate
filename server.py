@@ -286,15 +286,16 @@ def search_words():
 def edit_comment(question_id, comment_id):
     comment=data_handler.get_one_comment( comment_id)
     if request.method == "POST":   
-        print(comment)
         edited_comment = request.form.get('editcomment')
-        print(edited_comment)
         data_handler.edit_comments(comment,edited_comment)
         return redirect(url_for("display_question",question_id=question_id, user_id=session['id']))
     return render_template('edit_comment.html', comment_id=comment_id , comment=comment, question_id=question_id)
 
 
-
+@app.route('/list/<question_id>/comment/<comment_id>/delete', methods=['GET', 'POST'])
+def delete_comments(question_id,comment_id):
+    data_handler.delete_comment(comment_id)
+    return redirect(url_for("display_question",question_id=question_id, user_id=session['id']))
 
 
 

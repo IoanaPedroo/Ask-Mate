@@ -32,6 +32,14 @@
             >{{comment["id"]}} {{comment["message"]}}
             edited_count:{{comment["edited_count"]}}
         </li>
+        <form
+        action="{{url_for('delete_comments', question_id=question_id,comment_id=comment['id'])}}"
+        method="POST"
+    >
+        <button type="submit" name="delete_c" class="btn btn-primary">
+            Delete comment
+        </button>
+        </form>
         {% endfor %}
     </ul>
 </form>
@@ -57,10 +65,10 @@
         <a
             href="{{ url_for('new_comment', question_id=question_id, answer_id=answer_id) }}"
             >ID:</a
-        >{% if answer['acceptance']%}
+        >{% if  not answer['acceptance']%}
         {{answer["id"]}} {{answer['message']}} vote
         number:{{answer["vote_number"]}}
-        {% elif not answer['acceptance']%}
+        {% elif answer['acceptance'] %}
         <p>{{answer["id"]}}</p>
         <strong>{{answer['message']}}</strong>
         <p>vote number:{{answer["vote_number"]}}</p>
@@ -78,6 +86,14 @@
             
         </ul>
     </li>
+    <form
+        action="{{url_for('delete_comments', question_id=question_id,comment_id=comment['id'])}}"
+        method="POST"
+    >
+        <button type="submit" name="delete_c" class="btn btn-primary">
+            Delete comment
+        </button>
+        </form>
     {% endfor %}
     <form
         action="{{url_for('delete_answer', answer_id=answer['id'], question_id=question_id)}}"

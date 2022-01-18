@@ -119,6 +119,12 @@ def add_new_data_to_table(cursor, result, content):
 
 
 @data_connection.connection_handler
+def delete_comment(cursor, comment_id):
+    cursor.execute("""
+    DELETE FROM comment WHERE id=%(comment_id)s""", {'comment_id':comment_id})
+
+
+@data_connection.connection_handler
 def delete_function(cursor, question_id):
     cursor.execute(
         """
@@ -231,7 +237,7 @@ def edit_comments(cursor, comment, edited_comment):
         """,
         {
             "comment_id": comment['id'],
-            "message": message,
+            "message": edited_comment,
             "submission_time": dt,
         },
     )
@@ -248,18 +254,8 @@ def edit_question_answer(cursor, result):
         result,
     )
 
-@data_connection.connection_handler
-def edit_comments(cursor ,result):
-    print(result)
-    cursor.execute(
-        """
-            UPDATE comment
-            SET message =  %(message)s,
-            WHERE id = %(id)s ;
-        """,
-        {'message':result['message'],
-        'id':result['id']}
-    )
+
+    
 
 
 @data_connection.connection_handler
