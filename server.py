@@ -5,7 +5,6 @@ from werkzeug.utils import secure_filename
 import bcrypt
 from bonus_questions import SAMPLE_QUESTIONS
 
-
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
@@ -16,31 +15,12 @@ app.config["UPLOAD_FOLDER"] = os.path.join(
 )
 
 
-@app.route("/itdoesnotmatter", methods=["POST"])
-def acceptance_answers():
+@app.route("/itdoesnotmatter/<answer_id>/", methods=["POST"])
+def acceptance_answers(answer_id):
     user_id = session["id"]
-    data_handler.accept_answer(user_id)
+    data_handler.accept_answer(answer_id, user_id)
+    data_handler.change_reputation(user_id=user_id, value=15)
     question_id = request.form.get("question_id")
-    return redirect(url_for("display_question", question_id=question_id))
-
-
-@app.route("/itdoesnotmatter2", methods=["POST"])
-def change_reputation():
-    user_id = session["id"]
-    question_id = request.form.get("question_id")
-    answer_id = request.form.get("answer_id")
-    value = 0
-    if vote_question_up(question_id=question_id):
-        value = 5
-    if vote_question_down(question_id=question_id):
-        value = -2
-    if vote_answer_up(question_id=question_id, answer_id=answer_id):
-        value = 10
-    if vote_answer_down(question_id=question_id, answer_id=answer_id):
-        value = -2
-    if acceptance_answers():
-        value = 15
-    data_handler.change_reputation(user_id=user_id, value=value)
     return redirect(url_for("display_question", question_id=question_id))
 
 
@@ -63,7 +43,7 @@ def display_question(question_id):
             data_handler.get_comments_for_answer(answer_id=answer["id"])
             for answer in answers
         ]
-
+        tags = data_handler.get_question_tags(question_id)
         return render_template(
             "question.html",
             question=data_handler.get_question(question_id),
@@ -72,6 +52,7 @@ def display_question(question_id):
             comments=data_handler.get_comments_for_question(question_id),
             comments_a=comm,
             user_id=session["id"],
+            tags=tags,
         )
     return redirect(url_for("login_user"))
 
@@ -125,11 +106,15 @@ def vote_question(id, count):
 
 @app.route("/list/<question_id>/vote-up", methods=["GET", "POST"])
 def vote_question_up(question_id):
+    user_id = data_handler.get_user(question_id)
+    data_handler.change_reputation(user_id=user_id['user_id'], value=5)
     return vote_question(question_id, "up")
 
 
 @app.route("/list/<question_id>/vote-down", methods=["GET", "POST"])
 def vote_question_down(question_id):
+    user_id = data_handler.get_user(question_id)
+    data_handler.change_reputation(user_id=user_id['user_id'], value=-2)
     return vote_question(question_id, "down")
 
 
@@ -207,11 +192,15 @@ def vote_answer(question_id, answer_id, count):
 
 @app.route("/list/<question_id>/<answer_id>/vote_up", methods=["GET", "POST"])
 def vote_answer_up(question_id, answer_id):
+    user_id = data_handler.get_user_2(answer_id)
+    data_handler.change_reputation(user_id=user_id['user_id'], value=10)
     return vote_answer(question_id, answer_id, "up")
 
 
 @app.route("/list/<question_id>/<answer_id>/vote-down", methods=["GET", "POST"])
 def vote_answer_down(question_id, answer_id):
+    user_id = data_handler.get_user_2(answer_id)
+    data_handler.change_reputation(user_id=user_id['user_id'], value=-2)
     return vote_answer(question_id, answer_id, "down")
 
 
@@ -295,13 +284,14 @@ def search_words():
             else data_handler.get_questions()
         )
 
-        return render_template("list.html", questions=posts, user_id=session["id"])
+        return render_template("list.html", questions=posts, user_id=session["id"], search_phrase=search_phrase)
+
 
 
 @app.route("/list/<question_id>/comment/<comment_id>/edit", methods=["GET", "POST"])
 def edit_comment(question_id, comment_id):
-    comment=data_handler.get_one_comment( comment_id)
-    if request.method == "POST":   
+    comment=data_handler.get_one_comment(comment_id)
+    if request.method == "POST":
         edited_comment = request.form.get('editcomment')
         data_handler.edit_comments(comment,edited_comment)
         return redirect(url_for("display_question",question_id=question_id, user_id=session['id']))
@@ -384,13 +374,17 @@ def new_tag(question_id):
     if request.method == "POST":
         result={'name':request.form.get('message')}
         data_handler.add_tag(question_id, result)
-        return redirect('display_question', question_id=question_id)
+        return redirect(url_for('display_question', question_id=question_id))
     return render_template('add_tag.html')
 
 @app.route("/list/<question_id>/tag/<tag_id>/delete", methods=["GET", "POST"])
 def delete_tag(question_id, tag_id):
     data_handler.delete_t(question_id, tag_id)
 
+@app.route("/tag")
+def list_tags():
+    tags = data_handler.get_tags()
+    return render_template("tags.html", tags=tags)
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

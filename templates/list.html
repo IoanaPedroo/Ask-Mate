@@ -68,13 +68,34 @@
             <td class="table-light mb-0">{{ dictionary["view_number"] }}</td>
             <td class="table-light mb-0">{{ dictionary["vote_number"] }}</td>
             <td class="table-light mb-0">
-                <a
-                    class="text-decoration-none"
-                    href="{{url_for('display_question', question_id=dictionary['id'])}}"
-                    >{{ dictionary["title"] }}
-                </a>
+                {% if search_phrase %}
+                    {% for word in dictionary["title"].split(" ") %}
+                        {% if search_phrase.lower() in word.lower() %}
+                            <mark style="background-color: yellow;">{{ word }}</mark>
+                            {%  else %}
+                            {{ word }}
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <a class="text-decoration-none"
+                        href="{{url_for('display_question', question_id=dictionary['id'])}}"
+                        >{{ dictionary["title"] }}
+                    </a>
+                {% endif %}
             </td>
-            <td class="table-light mb-0">{{ dictionary["message"] }}</td>
+            <td class="table-light mb-0">
+                {% if search_phrase %}
+                    {% for word in dictionary["message"].split(" ") %}
+                        {% if search_phrase.lower() in word.lower() %}
+                            <mark style="background-color: yellow;">{{ word }}</mark>
+                            {%  else %}
+                            {{ word }}
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    {{ dictionary["message"] }}
+                {% endif %}
+            </td>
             <td class="table-light mb-0">
                 {% if dictionary.image %}
                 <img

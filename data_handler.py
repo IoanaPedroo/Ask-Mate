@@ -244,13 +244,19 @@ def edit_comments(cursor, comment, edited_comment):
 
 @data_connection.connection_handler
 def edit_question_answer(cursor, result):
+    dt = datetime.now().strftime("%Y-%m-%d %H:%M")
     cursor.execute(
         """
             UPDATE answer
-            SET message = %(message)s
+            SET submission_time = %(submission_time)s, message = %(message)s
             WHERE id = %(answer_id)s AND question_id = %(question_id)s;
         """,
-        result,
+        {
+            "question_id": result['question_id'],
+            "answer_id": result['answer_id'],
+            "message": result['message'],
+            "submission_time": dt,
+        },
     )
 
 
@@ -388,14 +394,14 @@ def get_c_by_user(cursor, user_id):
 
 
 @data_connection.connection_handler
-def accept_answer(cursor, user_id):
+def accept_answer(cursor, answer_id, user_id):
     cursor.execute(
         """
         UPDATE answer
         SET acceptance = (CASE WHEN acceptance=FALSE THEN TRUE ELSE FALSE END)
-        WHERE user_id = %(user_id)s;
+        WHERE id = %(answer_id)s and user_id =%(user_id)s
         """,
-        {"user_id": user_id},
+        {"answer_id": answer_id, "user_id": user_id},
     )
 
 
@@ -403,9 +409,9 @@ def accept_answer(cursor, user_id):
 def change_reputation(cursor, user_id, value):
     cursor.execute(
         """
-        UPDATE answer
-        SET  vote_number = vote_number + %(value)s
-        WHERE user_id=%(user_id)s
+        UPDATE users
+        SET  reputation = reputation + %(value)s
+        WHERE id=%(user_id)s
         """,
         {"user_id": user_id, "value": value},
     )
@@ -435,7 +441,7 @@ def get_one_comment(cursor, comment_id):
 
 
 @data_connection.connection_handler
-def add_tag(cursor, question_id, result, id):
+def add_tag(cursor, question_id, result):
     cursor.execute(
         """
         INSERT INTO tag(name) VALUES(%(result)s);
@@ -456,3 +462,44 @@ def delete_t(cursor, question_id, tag_id):
             'tag_id': tag_id
         }
     )
+@data_connection.connection_handler
+def get_user(cursor, question_id):
+    cursor.execute("""
+    SELECT user_id FROM question WHERE id = %(question_id)s;""",
+                   {"question_id": question_id},
+                   )
+    return cursor.fetchone()
+
+
+@data_connection.connection_handler
+def get_user_2(cursor, answer_id):
+    cursor.execute("""
+    SELECT user_id FROM answer WHERE id = %(answer_id)s;""",
+                   {
+                       "answer_id": answer_id
+                   })
+    return cursor.fetchone()
+
+@data_connection.connection_handler
+def get_tags(cursor):
+    cursor.execute("""
+    SELECT name, COUNT(question.id) FROM tag
+    inner join question_tag on tag.id = question_tag.tag_id
+    inner join question on question.id = question_tag.question_id
+    group by name;
+    """)
+    return cursor.fetchall()
+
+@data_connection.connection_handler
+def get_question_tags(cursor, question_id):
+    cursor.execute("""
+    SELECT name FROM tag
+    LEFT OUTER JOIN question_tag ON tag.id = question_tag.tag_id
+    LEFT OUTER JOIN question on question.id = question_tag.question_id
+    WHERE question_tag.question_id = %(question_id)s
+    """,
+       {"question_id": question_id},
+       )
+    return cursor.fetchall()
+
+
