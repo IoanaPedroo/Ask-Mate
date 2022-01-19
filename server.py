@@ -379,5 +379,18 @@ def user_page(user_id):
     return redirect(url_for("main_page"))
 
 
+@app.route("/list/<question_id>/new-tag", methods=["GET", "POST"])
+def new_tag(question_id):
+    if request.method == "POST":
+        result={'name':request.form.get('message')}
+        data_handler.add_tag(question_id, result)
+        return redirect('display_question', question_id=question_id)
+    return render_template('add_tag.html')
+
+@app.route("/list/<question_id>/tag/<tag_id>/delete", methods=["GET", "POST"])
+def delete_tag(question_id, tag_id):
+    data_handler.delete_t(question_id, tag_id)
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

@@ -430,3 +430,29 @@ def get_one_comment(cursor, comment_id):
         {"comment_id": comment_id},
     )
     return cursor.fetchone()
+
+
+
+
+@data_connection.connection_handler
+def add_tag(cursor, question_id, result, id):
+    cursor.execute(
+        """
+        INSERT INTO tag(name) VALUES(%(result)s);
+        INSERT INTO question_tag (question_id, tag_id)
+        SELECT tag.id, question_tag.tag_id FROM tag 
+        INNER JOIN question_tag ON question_tag.tag_id=tag.id 
+        WHERE name=%(result)s""", {
+                'result':result['name']
+            }
+    )
+
+@data_connection.connection_handler
+def delete_t(cursor, question_id, tag_id):
+    cursor.execute(
+        """
+        DELETE FROM question_tag WHERE question_id=%(question_id)s AND tag_id=%(tag_id)s""", {
+            'question_id': question_id,
+            'tag_id': tag_id
+        }
+    )
