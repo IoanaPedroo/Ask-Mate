@@ -44,6 +44,7 @@ def display_question(question_id):
             for answer in answers
         ]
         tags = data_handler.get_question_tags(question_id)
+        print(tags)
         return render_template(
             "question.html",
             question=data_handler.get_question(question_id),
@@ -375,11 +376,13 @@ def new_tag(question_id):
         result={'name':request.form.get('message')}
         data_handler.add_tag(question_id, result)
         return redirect(url_for('display_question', question_id=question_id))
-    return render_template('add_tag.html')
+    return render_template('add_tag.html', question_id=question_id)
 
 @app.route("/list/<question_id>/tag/<tag_id>/delete", methods=["GET", "POST"])
 def delete_tag(question_id, tag_id):
     data_handler.delete_t(question_id, tag_id)
+    return redirect(url_for("display_question",question_id=question_id, user_id=session['id']))
+
 
 @app.route("/tag")
 def list_tags():

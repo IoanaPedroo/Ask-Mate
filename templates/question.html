@@ -23,25 +23,27 @@
         Edit question
     </button>
 </form>
-    <form
-        action="{{url_for('new_tag', question_id=question_id)}}"
-        method="POST"
+<form
+        action="{{url_for('new_tag', question_id=question_id) }}"
+        ,
+        method="GET"
     >
         <button type="submit" name="add_tag" class="btn btn-primary">
             ADD TAG
         </button>
-        </form>
-        <form
-        action="{{url_for('delete_tag', question_id=question_id, tag_id=tag_id)}}"
-        method="POST"
-    >
-        <button type="submit" name="delete_tag" class="btn btn-primary">
-            DELETE TAG
-        </button>
-        </form>
+</form>
+
     <ul>
         {% for tag in tags %}
         <li>{{ tag.name }}</li>
+        <form
+        action="{{url_for('delete_tag', question_id=question_id, tag_id=tag.id)}}",
+        method="POST"
+    >
+        <button type="submit" name="delete_tags" class="btn btn-primary">
+            DELETE TAG
+        </button>
+        </form>
         {% endfor %}
     </ul>
     <ul>

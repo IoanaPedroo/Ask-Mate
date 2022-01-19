@@ -438,30 +438,27 @@ def get_one_comment(cursor, comment_id):
     return cursor.fetchone()
 
 
-
-
 @data_connection.connection_handler
 def add_tag(cursor, question_id, result):
     cursor.execute(
         """
         INSERT INTO tag(name) VALUES(%(result)s);
         INSERT INTO question_tag (question_id, tag_id)
-        SELECT tag.id, question_tag.tag_id FROM tag 
-        INNER JOIN question_tag ON question_tag.tag_id=tag.id 
-        WHERE name=%(result)s""", {
-                'result':result['name']
+        SELECT %(question_id)s,tag.id FROM tag
+        WHERE name=%(result)s""",{
+                'result':result['name'],
+                "question_id": question_id,
             }
     )
 
 @data_connection.connection_handler
 def delete_t(cursor, question_id, tag_id):
-    cursor.execute(
-        """
-        DELETE FROM question_tag WHERE question_id=%(question_id)s AND tag_id=%(tag_id)s""", {
-            'question_id': question_id,
-            'tag_id': tag_id
-        }
-    )
+    cursor.execute("""
+    DELETE FROM question_tag WHERE question_id=%(question_id)s AND tag_id=%(tag_id)s""", {'question_id':question_id, 'tag_id':tag_id})
+
+
+
+
 @data_connection.connection_handler
 def get_user(cursor, question_id):
     cursor.execute("""
@@ -493,7 +490,7 @@ def get_tags(cursor):
 @data_connection.connection_handler
 def get_question_tags(cursor, question_id):
     cursor.execute("""
-    SELECT name FROM tag
+    SELECT tag.name, tag.id FROM tag
     LEFT OUTER JOIN question_tag ON tag.id = question_tag.tag_id
     LEFT OUTER JOIN question on question.id = question_tag.question_id
     WHERE question_tag.question_id = %(question_id)s
