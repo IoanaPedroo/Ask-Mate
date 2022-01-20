@@ -1,6 +1,4 @@
 import data_connection
-from datetime import datetime
-
 
 
 @data_connection.connection_handler
