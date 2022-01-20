@@ -1,8 +1,6 @@
 import data_connection
 
 
-
-
 @data_connection.connection_handler
 def get_last_five_question(cursor):
     cursor.execute(
@@ -54,7 +52,6 @@ def delete_function(cursor, question_id):
 
             DELETE FROM question
             WHERE id = %(question_id)s;
-            
        """,
         {"question_id": question_id},
     )

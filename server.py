@@ -17,6 +17,11 @@ app.config["UPLOAD_FOLDER"] = os.path.join(
 )
 
 
+@app.route("/itdoesnot")
+def stuff():
+    return render_template("test.html")
+
+
 @app.route("/itdoesnotmatter/<answer_id>/", methods=["POST"])
 def acceptance_answers(answer_id):
     user_id = session["id"]
