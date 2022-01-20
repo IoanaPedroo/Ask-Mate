@@ -37,17 +37,21 @@ def get_question(cursor, question_id):
     return cursor.fetchone()
 
 
+
 @data_connection.connection_handler
 def delete_function(cursor, question_id):
     cursor.execute(
         """
             DELETE FROM comment
-            WHERE question_id = %(question_id)s;
+            WHERE comment.answer_id IN (SELECT answer.id FROM answer WHERE answer.question_id = %(question_id)s);
 
             DELETE FROM answer
             WHERE question_id = %(question_id)s;
-
+            
             DELETE FROM question_tag
+            WHERE question_id = %(question_id)s;
+            
+            DELETE FROM comment
             WHERE question_id = %(question_id)s;
 
             DELETE FROM question

@@ -234,9 +234,7 @@ def new_comment_question(question_id):
 
 @app.route("/list/<question_id>/<answer_id>/new-comment", methods=["GET", "POST"])
 def new_comment(question_id, answer_id):
-    print(answer_id)
     if request.method == "POST":
-            print(answer_id)
             result = {
                 "question_id": None,
                 "answer_id": answer_id,
