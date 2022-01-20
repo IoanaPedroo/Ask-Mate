@@ -46,11 +46,11 @@ def display_question(question_id):
     if "id" in session:
         data_handler.increase_view_numbers(question_id)
         answers = answerr.get_answers(question_id)
-        comm = [
+        comments_a = [
             commentt.get_comments_for_answer(answer_id=answer["id"])
             for answer in answers
         ]
-        print(comm)
+        print(comments_a)
         tags = tag.get_question_tags(question_id)
         return render_template(
             "question.html",
@@ -58,7 +58,7 @@ def display_question(question_id):
             answers=answers,
             question_id=question_id,
             comments=commentt.get_comments_for_question(question_id),
-            comm=comm,
+            comments_a=comments_a,
             user_id=session["id"],
             tags=tags,
         )
@@ -234,16 +234,17 @@ def new_comment_question(question_id):
 
 @app.route("/list/<question_id>/<answer_id>/new-comment", methods=["GET", "POST"])
 def new_comment(question_id, answer_id):
+    print(answer_id)
     if request.method == "POST":
-        if "newcomment" in request.form:
+            print(answer_id)
             result = {
                 "question_id": None,
                 "answer_id": answer_id,
                 "message": request.form.get("newcomment"),
                 "edited_count": 0,
-                "user_id": session["id"],
+                "user_id": session["id"]
             }
-            data_handler.add_new_data_to_table(result, "comment")
+            data_handler.add_new_data_to_table(result,"comment")
             return redirect(
                 url_for(
                     "display_question",

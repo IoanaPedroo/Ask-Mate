@@ -56,9 +56,8 @@ def add_new_data_to_table(cursor, result, content):
                 "user_id": result["user_id"],
             },
         )
-
-
-
+ 
+            
 @data_connection.connection_handler
 def increase_view_numbers(cursor, question_id):
     cursor.execute(
