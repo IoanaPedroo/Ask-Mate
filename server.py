@@ -4,7 +4,7 @@ import os
 from werkzeug.utils import secure_filename
 import bcrypt
 from bonus_questions import SAMPLE_QUESTIONS
-import question, answer, comment, tag, user
+import questionn, answerr, commentt, tag, user
 
 
 app = Flask(__name__)
@@ -20,7 +20,7 @@ app.config["UPLOAD_FOLDER"] = os.path.join(
 @app.route("/itdoesnotmatter/<answer_id>/", methods=["POST"])
 def acceptance_answers(answer_id):
     user_id = session["id"]
-    answer.accept_answer(answer_id, user_id)
+    answerr.accept_answer(answer_id, user_id)
     user.change_reputation(user_id=user_id, value=15)
     question_id = request.form.get("question_id")
     return redirect(url_for("display_question", question_id=question_id))
@@ -40,19 +40,20 @@ def verify_password(plain_text_password, hashed_password):
 def display_question(question_id):
     if "id" in session:
         data_handler.increase_view_numbers(question_id)
-        answers = answer.get_answers(question_id)
+        answers = answerr.get_answers(question_id)
         comm = [
-            comment.get_comments_for_answer(answer_id=answer["id"])
+            commentt.get_comments_for_answer(answer_id=answer["id"])
             for answer in answers
         ]
+        print(comm)
         tags = tag.get_question_tags(question_id)
         return render_template(
             "question.html",
-            question=question.get_question(question_id),
+            question=questionn.get_question(question_id),
             answers=answers,
             question_id=question_id,
-            comments=comment.get_comments_for_question(question_id),
-            comments_a=comm,
+            comments=commentt.get_comments_for_question(question_id),
+            comm=comm,
             user_id=session["id"],
             tags=tags,
         )
@@ -91,18 +92,18 @@ def new_answer(question_id):
 
 @app.route("/list/<question_id>/delete", methods=["GET", "POST", "DELETE"])
 def delete(question_id):
-    question.delete_function(question_id)
+    questionn.delete_function(question_id)
     return redirect(url_for("list_q"))
 
 
 @app.route("/<question_id>/<answer_id>/delete", methods=["GET", "POST", "DELETE"])
 def delete_answer(question_id, answer_id):
-    answer.delete_answer(question_id, answer_id)
+    answerr.delete_answer(question_id, answer_id)
     return redirect(url_for("display_question", question_id=question_id))
 
 
 def vote_question(id, count):
-    question.vote_question(id, count)
+    questionn.vote_question(id, count)
     return redirect(url_for("display_question", question_id=id))
 
 
@@ -126,11 +127,11 @@ def edit_question(question_id):
         if "question_message" in request.form:
             new_message = request.form["question_message"]
             new_title = request.form["title"]
-            question.edit_question(question_id, new_message, new_title)
+            questionn.edit_question(question_id, new_message, new_title)
             return redirect(url_for("display_question", question_id=question_id))
     return render_template(
         "edit.html",
-        question=question.get_question(question_id),
+        question=questionn.get_question(question_id),
         question_id=question_id,
         user_id=session["id"],
     )
@@ -138,7 +139,7 @@ def edit_question(question_id):
 
 @app.route("/")
 def main_page():
-    questions = question.get_last_five_question()
+    questions = questionn.get_last_five_question()
     return render_template("list.html", questions=questions)
 
 
@@ -150,7 +151,7 @@ def list_q():
         if request.args.get("order_direction")
         else "ASC"
     )
-    questions = question.sort_q(order_by, order_direction)
+    questions = questionn.sort_q(order_by, order_direction)
     return render_template("list.html", questions=questions)
 
 
@@ -182,7 +183,7 @@ def add_q(id=None):
 
 
 def vote_answer(question_id, answer_id, count):
-    answer.vote_answer(answer_id, count)
+    answerr.vote_answer(answer_id, count)
     return redirect(
         url_for(
             "display_question",
@@ -263,12 +264,12 @@ def edit_answer(question_id, answer_id):
             "message": request.form.get("message"),
             "image": None,
         }
-        answer.edit_question_answer(edited_answer)
+        answerr.edit_question_answer(edited_answer)
         return redirect(url_for("display_question", question_id=question_id))
 
     return render_template(
         "edit_answer.html",
-        answer=answer.get_answer(answer_id),
+        answer=answerr.get_answer(answer_id),
         answer_id=answer_id,
         question_id=question_id,
         user_id=session["id"],
@@ -292,17 +293,17 @@ def search_words():
 
 @app.route("/list/<question_id>/comment/<comment_id>/edit", methods=["GET", "POST"])
 def edit_comment(question_id, comment_id):
-    comme=comment.get_one_comment(comment_id)
+    comment=commentt.get_one_comment(comment_id)
     if request.method == "POST":
         edited_comment = request.form.get('editcomment')
-        comment.edit_comments(comme,edited_comment)
+        commentt.edit_comments(comment,edited_comment)
         return redirect(url_for("display_question",question_id=question_id, user_id=session['id']))
-    return render_template('edit_comment.html', comment_id=comment_id , comment=comme, question_id=question_id)
+    return render_template('edit_comment.html', comment_id=comment_id , comment=comment, question_id=question_id)
 
 
 @app.route('/list/<question_id>/comment/<comment_id>/delete', methods=['GET', 'POST'])
 def delete_comments(question_id,comment_id):
-    comment.delete_comment(comment_id)
+    commentt.delete_comment(comment_id)
     return redirect(url_for("display_question",question_id=question_id, user_id=session['id']))
 
 
