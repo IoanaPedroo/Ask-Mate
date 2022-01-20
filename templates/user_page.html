@@ -1,15 +1,29 @@
 {% extends "layout.html" %} {% block content %}
 
+<div>
     <p>Questions: {{ questions.questions }}</p>
     <p>Answers: {{ answers.answers }}</p>
     <p>Comments: {{ comments.comments }}</p>
+    <table class='table'>
+        <thead>
+            <tr>
+                <th scope="col">title</th>
+                <th scope="col">⏰</th>
+                <th scope="col">👁</th>
+                <th scope="col">❤️</th>
+
+            </tr>
+        </thead>
     {% for question in all_questions %}
-        <p>{{ question.submission_time }}</p>
-        <p>{{ question.view_number }}</p>
-        <p>{{ question.vote_number }}</p>
-        <p>{{ question.title }}</p>
-        <p><a href="{{ url_for('edit_question', question_id=question.id) }}">{{ question.message }}</a></p>
-        <p>{{ question.image }}</p>
+    <tbody>
+    <tr>
+        <td>{{ question.submission_time }}</td>
+        <td>{{ question.view_number }}</td>
+        <td>{{ question.vote_number }}</td>
+        <td>{{ question.title }}</td>
+        <td><a href="{{ url_for('edit_question', question_id=question.id) }}">{{ question.message }}</a></td>
+        <td>{{ question.image }}</td>
+    </tr>
     {% endfor %}
     {% for answer in all_answers %}
         <p>{{ answer.submission_time }}</p>
@@ -22,4 +36,9 @@
         <p>{{ comment.submission_time }}</p>
         <p>{{ comment.edited_count }}</p>
     {% endfor %}
+    </tbody>
+
+</table>
+</div>
+
 {% endblock %}

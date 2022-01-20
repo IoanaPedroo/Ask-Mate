@@ -1,5 +1,5 @@
 import data_connection
-
+from datetime import datetime
 
 @data_connection.connection_handler
 def delete_comment(cursor, comment_id):

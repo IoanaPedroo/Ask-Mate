@@ -292,12 +292,12 @@ def search_words():
 
 @app.route("/list/<question_id>/comment/<comment_id>/edit", methods=["GET", "POST"])
 def edit_comment(question_id, comment_id):
-    comment=comment.get_one_comment(comment_id)
+    comme=comment.get_one_comment(comment_id)
     if request.method == "POST":
         edited_comment = request.form.get('editcomment')
-        comment.edit_comments(comment,edited_comment)
+        comment.edit_comments(comme,edited_comment)
         return redirect(url_for("display_question",question_id=question_id, user_id=session['id']))
-    return render_template('edit_comment.html', comment_id=comment_id , comment=comment, question_id=question_id)
+    return render_template('edit_comment.html', comment_id=comment_id , comment=comme, question_id=question_id)
 
 
 @app.route('/list/<question_id>/comment/<comment_id>/delete', methods=['GET', 'POST'])
