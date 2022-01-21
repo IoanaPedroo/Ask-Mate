@@ -288,7 +288,7 @@ def search_words():
         posts = (
             data_handler.get_query(search_phrase)
             if search_phrase
-            else question.get_questions()
+            else questionn.get_questions()
         )
 
         return render_template("list.html", questions=posts, user_id=session["id"], search_phrase=search_phrase)

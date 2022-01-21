@@ -69,18 +69,19 @@ function getSortedItems(items, sortField, sortDirection) {
 function getFilteredItems(items, filterValue) {
     const specialChar = '!'
     const results = []
-    if(filterValue.substring(0, "!Description:".length) === '!Description:'){
-        return items.filter(it => !it['Description'].includes(filterValue.substring("!Description:".length)))
-    }
-    if(filterValue.substring(0, "Description:".length) === 'Description:'){
-        return items.filter(it => it['Description'].includes(filterValue.substring("Description:".length)))
-    }
-    if(filterValue[0] === specialChar){
-         return items.filter(it => !it['Title'].includes(filterValue.substring(1)));
-    }
+
     for (let i=0; i<items.length; i++) {
         if(items[i]['Title'].includes(filterValue) || items[i]['Description'].includes(filterValue)){
             results.push(items[i])
+    }
+        if(filterValue.substring(0, "!Description:".length) === '!Description:'){
+            return items.filter(it => !it['Description'].toLowerCase().includes(filterValue.substring("!Description:".length)))
+    }
+        if(filterValue.substring(0, "Description:".length) === 'Description:'){
+            return items.filter(it => it['Description'].toLowerCase().includes(filterValue.substring("Description:".length)))
+    }
+        if(filterValue[0] === specialChar){
+            return items.filter(it => !it['Title'].includes(filterValue.substring(1)));
     }
     }
     return results;
