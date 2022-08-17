@@ -1,0 +1,12 @@
+.al{
+    display: inline; float: left; padding-right: 2rem;
+}
+#left, #merge{
+    display: inline; float: left; padding-right: 2rem;
+}
+
+#none{text-decoration: none;}
+
+#com{
+    display: inline;
+}

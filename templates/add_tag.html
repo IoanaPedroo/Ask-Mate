@@ -1,0 +1,16 @@
+{% extends "layout.html" %} {% block content %}
+
+<form action="{{url_for('new_tag', question_id=question_id)}}" method="post">
+    <label for="message" class="form-label">ADD A NEW TAG</label>
+    <textarea
+        id="message"
+        name="message"
+        class="form-control"
+        aria-label="With textarea"
+        placeholder="Type here..."
+        required
+    ></textarea>
+    <button type="submit" class="btn mt-3 btn-dark btn-lg">Submit TAG</button>
+</form>
+
+{% endblock %}

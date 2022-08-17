@@ -1,0 +1,112 @@
+{% extends "layout.html" %} {% block style %}
+
+<style>
+    table,
+    th,
+    td {
+        object-position: center;
+        width: 1500px;
+        padding: 15px;
+    }
+    h1,
+    a {
+        font-family: Consolas;
+    }
+    h1 {
+        font-size: 50px;
+        object-position: center;
+    }
+    a {
+        font-size: 20px;
+    }
+    .img-thumbnail {
+        width: 200px;
+        height: 200px;
+    }
+</style>
+{% endblock style %} {% block content %}
+
+<h5 class="h4 category rounded-top text-dark">
+    <a href="{{ url_for('list_q') }}">ASK MATE3</a>
+</h5>
+
+<h2><a href="{{ url_for('add_q') }}">Add Question</a></h2>
+
+<table class="table table-hover table-light table-striped">
+    <thead class="col-12 bg-warning">
+        <tr>
+            {% if questions | length > 0 %} {% for dictionary in
+            questions[0].keys() %}{% if dictionary != 'user_id' %}
+            <th scope="col" class="forum-col align-middle">
+                <small class="d-flex justify-content-around w-100 text-center">
+                    <a
+                        class="text-decoration-none"
+                        href="{{url_for('list_q', order_by=dictionary, order_direction='ASC')}}"
+                        >🔼</a
+                    >
+                    {{ dictionary.replace('_', ' ') | title }}
+                    <a
+                        class="text-decoration-none"
+                        href="{{url_for('list_q', order_by=dictionary, order_direction='DESC')}}"
+                        >🔽</a
+                    >
+                </small>
+            </th>
+                {% endif %}
+            {% endfor %} {% else %}
+            <p>No results found</p>
+            {% endif %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for dictionary in questions %}
+        <tr class="table-light">
+            <td class="table-light">{{ dictionary["id"] }}</td>
+            <td class="table-light mb-0">
+                {{ dictionary["submission_time"] }}
+            </td>
+            <td class="table-light mb-0">{{ dictionary["view_number"] }}</td>
+            <td class="table-light mb-0">{{ dictionary["vote_number"] }}</td>
+            <td class="table-light mb-0">
+                {% if search_phrase %}
+                    {% for word in dictionary["title"].split(" ") %}
+                        {% if search_phrase.lower() in word.lower() %}
+                            <mark style="background-color: yellow;">{{ word }}</mark>
+                            {%  else %}
+                            {{ word }}
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <a class="text-decoration-none"
+                        href="{{url_for('display_question', question_id=dictionary['id'])}}"
+                        >{{ dictionary["title"] }}
+                    </a>
+                {% endif %}
+            </td>
+            <td class="table-light mb-0">
+                {% if search_phrase %}
+                    {% for word in dictionary["message"].split(" ") %}
+                        {% if search_phrase.lower() in word.lower() %}
+                            <mark style="background-color: yellow;">{{ word }}</mark>
+                            {%  else %}
+                            {{ word }}
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    {{ dictionary["message"] }}
+                {% endif %}
+            </td>
+            <td class="table-light mb-0">
+                {% if dictionary.image %}
+                <img
+                    src="{{ dictionary['image'] }}"
+                    alt="{{ dictionary['image'] }}"
+                    class="img-thumbnail"
+                />
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

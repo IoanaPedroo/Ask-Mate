@@ -1,0 +1,39 @@
+{% extends "layout.html" %} {% block content %}
+
+<h1
+    class="
+        placeholder
+        text-uppercase
+        mb-4
+        font-weight-bold
+        col-12
+        bg-warning
+        mb-0
+        text-center
+    "
+>
+    Edit question
+</h1>
+<form
+    action='{{url_for("edit_question", question_id=question_id)}}'
+    method="post"
+>
+    <label class="form-label" for="message">Edit question message</label>
+    <textarea
+        id="question_message"
+        class="form-control"
+        name="question_message"
+        rows="3"
+        required
+    >
+{{question['title']}}</textarea
+    >
+
+    <label class="form-label mt-3" for="message">Edit question title</label>
+    <textarea id="title" class="form-control" name="title" rows="3" required>
+{{question['message']}}</textarea
+    >
+    <button class="mt-3 btn btn-dark" type="submit">Submit question</button>
+</form>
+
+{% endblock %}

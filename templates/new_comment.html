@@ -1,0 +1,19 @@
+{% extends "layout.html" %} {% block content %}
+
+<form
+    action="{{url_for('new_comment', question_id=question_id, answer_id=answer_id)}}"
+    method="post"
+>
+    <label for="newcomment" class="form-label">ADD A NEW COMMENT</label>
+    <textarea
+        id="newcomment"
+        name="newcomment"
+        class="form-control"
+        aria-label="With textarea"
+        placeholder="Type here..."
+    ></textarea>
+    <button type="submit" class="btn mt-3 btn-dark btn-lg">
+        Submit comment
+    </button>
+</form>
+{% endblock %}
