@@ -28,10 +28,15 @@ Frontend was made with HTML,CSS, Javascript and Boostrap
 
 Features:
 Users can register/login
+
 Filer questions after column names
+
 Search bar with highlited matches
+
 Bonus question page
+
 Only if they are logged in they can:
+
 - add questions
 - answer questions
 - add comments to others questions or/and answers
