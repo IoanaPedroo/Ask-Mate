@@ -17,7 +17,6 @@ def get_comments_for_question(cursor, question_id):
 
 @data_connection.connection_handler
 def get_comments_for_answer(cursor, answer_id):
-    print(answer_id)
     cursor.execute(
         "SELECT * FROM comment WHERE answer_id = %(answer_id)s;",
         {"answer_id": answer_id},
