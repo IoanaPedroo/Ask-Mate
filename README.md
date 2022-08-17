@@ -43,3 +43,18 @@ Only if they are logged in they can:
 - add photos to their question
 - add tags to their question
 
+![Screenshot from 2022-08-17 20-07-55](https://user-images.githubusercontent.com/89388372/185206472-0fcd36e8-e1af-4637-a355-a2e37a15194a.png)
+
+![Screenshot from 2022-08-17 20-08-46](https://user-images.githubusercontent.com/89388372/185206636-d02febe9-855d-4ac5-bbe5-1a84461d16d3.png)
+
+![Screenshot from 2022-08-17 20-07-39](https://user-images.githubusercontent.com/89388372/185206439-6912146a-52e6-4086-8bc3-0df980e12716.png)
+
+![Screenshot from 2022-08-17 20-08-00](https://user-images.githubusercontent.com/89388372/185206525-502f97ba-fa3c-48ea-9687-56e7d489f62a.png)
+
+![Screenshot from 2022-08-17 20-07-25](https://user-images.githubusercontent.com/89388372/185206715-737cb6a0-be98-4317-8918-9cf22d5a864e.png)
+
+![Screenshot from 2022-08-17 20-07-30](https://user-images.githubusercontent.com/89388372/185207004-8d8dc256-1060-4a24-9e67-a817d2455336.png)
+
+![Screenshot from 2022-08-17 20-02-30](https://user-images.githubusercontent.com/89388372/185207144-3e5fdacd-7d86-457f-8deb-ee9651fd6fdd.png)
+
+
